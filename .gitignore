@@ -1,5 +1,10 @@
-./bin
-./include
-./lib
-./local
-./share
+
+# Ignore folders
+bin/
+include/
+lib/
+local/
+share/
+
+# Ignore Files
+.Python
