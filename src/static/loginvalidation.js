@@ -1,13 +1,13 @@
-$(document).ready(function(){
+let form = document.querySelector("main form").addEventListener("submit", function(event){
+    
+    let email = document.querySelector("#email");
+    let pw = document.querySelector("#pw");
 
-    $("form").submit(function(event){
-        
-        let userName = $("#username").val();
-        let pW = $("#pw").val();
+    let pwValue = pw.value;
+    let emailValue = email.value;
 
-        if (!userName || !pW) {
-            event.preventDefault();
-            alert("Please double check the fields.");
-        }
-    });
+    if (!pwValue || !emailValue) {
+        event.preventDefault();
+        alert("Please check the fields below.");
+    }
 });

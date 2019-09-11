@@ -1,42 +1,6 @@
-body {
-    margin: 0;
-}
-
-main {
-    text-align: center;
-}
-
-h1 {
-    padding-right: 4em;
-}
-
-.container {
-    background-color: rgb(54, 63, 117);
-    padding: 1em 4em;
-}
-
-.login-form {
-    margin-top: 5em;
-    padding: 3em 0;
-    width: 30%;
+form {
+    width: 25%;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 5em;
 }
-
-#brand {
-    color: white;
-    text-decoration: none;
-}
-
-#username {
-    margin-bottom: 1em;
-}
-
-#pw {
-    margin-bottom: 2em;
-}
-
-#brand:hover {
-    text-decoration: underline;
-}
-

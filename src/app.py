@@ -26,4 +26,4 @@ def login():
         pass
         # user is attempting to log in
     else:
-        return render_template("index.html")
+        return render_template("login.html")
