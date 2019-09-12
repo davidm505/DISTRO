@@ -30,22 +30,23 @@ db_file = 'test.sqlite'
 @login_required
 def index():
 
+    # remove project_id if it exits to remove email nav items
+    if session.get("project_id"):
+        session.pop("project_id", None)
+
     id = session.get("user_id")
+
     projects = []
     with sqlite3.connect(db_file) as conn:
         c = conn.cursor()
 
         #query database
-        c.execute("SELECT project_name FROM projects WHERE user_id=?", (id,))
+        c.execute("SELECT project_id, project_name FROM projects WHERE user_id=? GROUP BY project_id", (id,))
 
         projects = c.fetchall()
-
     
     if len(projects) == 0:
         projects[0] = "You don't have any projects!"
-
-    for item in projects:
-        print(item[0])
 
     return render_template("index.html", projects=projects)
 
@@ -92,3 +93,21 @@ def logout():
     session.clear()
 
     return redirect("/")
+
+
+@app.route("/email/<project_id>")
+@login_required
+def email(project_id):
+
+    session["project_id"] = project_id
+
+    rows = []
+    with sqlite3.connect(db_file) as conn:
+        c = conn.cursor()
+
+        c.execute("SELECT project_name, project_code FROM projects WHERE project_id=? AND user_id=?", 
+            (project_id, session.get("user_id"),))
+
+        rows = c.fetchall()
+    
+    return render_template("email.html")

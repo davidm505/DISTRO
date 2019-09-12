@@ -1,0 +1,23 @@
+body {
+    background-color: #222629;
+}
+
+.bg-light {
+    background-color: #222629 !important;
+}
+
+.navbar-light .navbar-brand {
+    color: #6F2232;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: #6B6E70;
+}
+
+.navbar-light .navbar-brand:hover {
+    color: rgb(204, 59, 88);
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: rgb(196, 204, 209);
+}

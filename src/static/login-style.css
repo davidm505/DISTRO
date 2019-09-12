@@ -4,3 +4,14 @@ form {
     margin-right: auto;
     margin-top: 5em;
 }
+
+.btn-primary {
+    background-color: #86C232;
+    border: none;
+}
+
+#welcome {
+    color: #6F2232;
+    font-size: 2em;
+    margin-bottom: 0.5em;
+}

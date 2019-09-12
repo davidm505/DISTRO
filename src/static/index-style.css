@@ -1,5 +1,9 @@
+body {
+    background-color: #222629;
+}
+
 .card-container {
-    margin-top: 5em;
+    margin-top: 3em;
     width: 50%;
     margin-left: auto;
     margin-right: auto;
@@ -7,4 +11,13 @@
 
 .card {
     margin-bottom: 1em;
+    background-color: #1a1a1d;
+    color: #6F2232;
+    font-style: italic;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #86C232;
+    border: none;
 }

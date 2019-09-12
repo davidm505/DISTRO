@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/layout-style.css">
     <!-- custom style -->
     {% block style %}{% endblock %}
     <title>DISTRO | {% block title %}{% endblock %}</title>
@@ -17,9 +18,12 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" href="#">Features</a></li>
-            </ul>
+            {% if session.project_id %}
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Break</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Complete</a></li>
+                </ul>
+            {% endif %}
             {% if session.user_id %}
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
