@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="../static/index-style.css">
+{% endblock %}
+
+{% block body %}
+    <main>
+        <div class="card-container">
+            <div class="row">
+                {% for item in projects %}
+                    <div class=" col">
+                        <div class="card" style="width: 18rem;">
+                            <img class="card-img-top" src="https://m.media-amazon.com/images/M/MV5BMzE5NTgyMDY2N15BMl5BanBnXkFtZTgwNTcyNTAwNzM@._V1_SY1000_CR0,0,667,1000_AL_.jpg" alt="{{ item[0] }} poster">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item[0] }}</h5>
+                                <a href="#" class="btn btn-primary">Create Emails</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+{% endblock %}

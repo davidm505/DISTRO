@@ -5,6 +5,9 @@ include/
 lib/
 local/
 share/
+pysqlite2-doc
+src/__pycache__/
 
 # Ignore Files
 .Python
+src/test.sqlite.sqbpro
