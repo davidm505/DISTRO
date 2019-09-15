@@ -2,10 +2,41 @@ body {
     background-color: #222629;
 }
 
+a {
+    color: white;
+}
+
+a:hover {
+    text-decoration: none;
+    color: white;
+}
+
 .container {
     width: 80%;
     background-color: #222629;
     margin-left: auto;
     margin-right: auto;
     margin-top: 5em;
+}
+
+.card {
+    background-color: #293036;
+    opacity: 0.6;
+    margin-bottom: 1rem;
+}
+
+.card:hover {
+    opacity: 1;
+}
+
+#br-card {
+    border-top: 0.2rem solid #522A67;
+}
+
+#wr-card {
+    border-top: 0.2rem solid #2A5467;
+}
+
+#comp-card {
+    border-top: 0.2rem solid #2A6757;
 }

@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{dist_type}}
+{% endblock %}
+
+{% block body %}
+    <main>
+        <form action="">
+            <label for="info">#1 Initial Information</label> <br>
+            <input type="text" name="episode" id="episode" placeholder="Episode" maxlength="10" autofocus>
+            <input type="text" name="shoot-day" id="shoot-day" placeholder="Shoot Day" maxlength="10">
+            <input type="number" name="gb" id="gb" placeholder="Total GB" min="0" step="0.01">
+            <input type="text" name="trt" id="trt" placeholder="Total Runtime" maxlength="11" minlength="11">
+            <h5>#2 Master Media</h5>
+            <textarea name="cam-masters" id="cam-masters" cols="20" rows="2" placeholder="Camera Masters"></textarea>
+            <textarea name="sr" id="sr" cols="20" rows="2" placeholder="Sound Masters"></textarea>
+        </form>
+    </main>
+{% endblock %}

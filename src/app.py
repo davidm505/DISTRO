@@ -110,4 +110,27 @@ def email(project_id):
 
         rows = c.fetchall()
     
-    return render_template("email.html")
+    return render_template("email.html",project_id=project_id)
+
+
+@app.route("/generator/<email>/<proj_id>")
+@login_required
+def generator(email, proj_id):
+
+    rows = []
+
+    with sqlite3.connect(db_file) as conn:
+
+        c = conn.cursor()
+
+        c.execute("SELECT * FROM projects WHERE project_id=? AND user_id=?", 
+            (proj_id, session.get("user_id"),))
+
+        rows = c.fetchall()
+
+    if len(rows) < 1:
+        return render_template("apology.html", error=proj_id)
+
+    if email == 'break' or email == 'wrap':
+        return render_template("generator.html", dist_type=email)
+    
