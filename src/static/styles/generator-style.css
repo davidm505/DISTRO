@@ -1,0 +1,47 @@
+form {
+    margin-left: 10rem;
+}
+
+input {
+    background-color: #212529;
+    border-bottom: 2px solid #3e454d;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    color: white;
+}
+
+textarea {
+    background-color: #212529;
+    border: 2px solid #3e454d;
+    color: white;
+}
+
+::placeholder {
+    opacity: 1;
+    color: rgba(145, 167, 192, 0.5);
+}
+
+.label {
+    color: #86C232;
+    font-size: 2rem;
+    padding-bottom: 1rem;
+}
+
+.form-container {
+    margin-top: 5rem;
+    text-align: left;
+}
+
+.masters {
+    margin-top: 5rem;
+}
+
+.submit-button {
+    background-color: #86C232;
+    margin-top: 3rem;
+}
+
+.test {
+    color: white;
+}

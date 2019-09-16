@@ -7,6 +7,7 @@ local/
 share/
 pysqlite2-doc
 src/__pycache__/
+src/static/images/
 
 # Ignore Files
 .Python

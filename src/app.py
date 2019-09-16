@@ -1,11 +1,12 @@
 import os
 
-from flask import Flask, redirect, render_template, session, request
+from flask import Flask, redirect, render_template, session, request, jsonify
 from flask_session import Session
 from tempfile import mkdtemp
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import login_required
+from BreakEmail import camera_rolls, sound_rolls, day_check, body_generation, subject_generation
 
 # Configure application 
 app = Flask(__name__)
@@ -24,6 +25,7 @@ Session(app)
 
 # declare db file
 db_file = 'test.sqlite'
+db_crew = 'distro.sqlite3'
 
 
 @app.route("/")
@@ -101,36 +103,93 @@ def email(project_id):
 
     session["project_id"] = project_id
 
-    rows = []
     with sqlite3.connect(db_file) as conn:
         c = conn.cursor()
 
         c.execute("SELECT project_name, project_code FROM projects WHERE project_id=? AND user_id=?", 
             (project_id, session.get("user_id"),))
 
-        rows = c.fetchall()
+        c.fetchall()
     
     return render_template("email.html",project_id=project_id)
 
 
-@app.route("/generator/<email>/<proj_id>")
+@app.route("/generator/<email>/<proj_id>", methods=["GET", "POST"])
 @login_required
 def generator(email, proj_id):
 
     rows = []
-
-    with sqlite3.connect(db_file) as conn:
-
-        c = conn.cursor()
-
-        c.execute("SELECT * FROM projects WHERE project_id=? AND user_id=?", 
-            (proj_id, session.get("user_id"),))
-
-        rows = c.fetchall()
-
-    if len(rows) < 1:
-        return render_template("apology.html", error=proj_id)
-
-    if email == 'break' or email == 'wrap':
-        return render_template("generator.html", dist_type=email)
+    if request.method == "GET":
     
+        with sqlite3.connect(db_file) as conn:
+
+            c = conn.cursor()
+
+            c.execute("SELECT * FROM projects WHERE project_id=? AND user_id=?", 
+                (proj_id, session.get("user_id"),))
+
+            rows = c.fetchall()
+
+        if len(rows) < 1:
+            return render_template("apology.html", error=proj_id)
+
+        if email == 'break' or email == 'wrap':
+            return render_template("distro.html", email=email, project_id=proj_id)
+    else:
+
+        results = {}
+    
+        results["ep"] = request.form.get("ep")
+        results["shoot_day"] = request.form.get("shoot-day")
+        results["gb"] = request.form.get("gb")
+        results["trt"] = request.form.get("trt")
+        results["cm"] = request.form.get("c-masters")
+        results["sm"] = request.form.get("s-masters")
+        results["email"] = email
+
+        print("These are the results", results)
+
+        for key in results:
+            value = results[key]
+
+            if value == '':
+                return render_template("apology.html", error="Please fill out all fields.")
+
+        results["cm"] = camera_rolls(results["cm"])
+        results["sm"] = sound_rolls(results["sm"])
+        results["day"] = day_check()
+        
+        with sqlite3.connect(db_file) as conn:
+            
+            c = conn.cursor()
+
+            c.execute('SELECT project_code, project_name FROM projects WHERE project_id=? AND user_id=?',
+                (proj_id, session.get("user_id"),))
+        
+            rows = c.fetchall()
+
+            results["show_code"] = rows[0][0]
+            
+            results["show_name"] = rows[0][1]
+        
+        distro = []
+        with sqlite3.connect(db_crew) as conn:
+
+            c = conn.cursor()
+
+            c.execute("SELECT email FROM crew WHERE project_id=?",
+            (proj_id))
+
+            distro = c.fetchall()
+
+        email = {}
+
+        crew = ''
+        for item in distro:
+            crew += item[0]
+        
+        email["distro"] = crew
+        email["subject"] = subject_generation(results)
+        email["body"] = body_generation(results)
+            
+        return jsonify(email)

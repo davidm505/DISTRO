@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{email}}
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/generator-style.css')}}">
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous">
+    </script>
+{% endblock %}
+    
+{% block body %}
+    <main>
+        <div class="form-container">
+            <form action="/generator/{{email}}/{{project_id}}" method="POST">
+                <h5 class="label">#1 Initial Information</h5>
+                <input type="text" name="ep" id="ep" placeholder="Episode" maxlength="10" autofocus>
+                <input type="text" name="shoot-day" id="shoot-day" placeholder="Shoot Day" maxlength="10">
+                <input type="number" name="gb" id="gb" placeholder="Total GB" step="0.01" min="0.01">
+                <input type="text" name="trt" id="trt" placeholder="Total Runtime" minlength="11" maxlength="11"> <br>
+                <div class="masters">
+                    <h5 class="label">#2   Master Media</h5>
+                    <textarea name="c-masters" id="c-masters" placeholder="Camera Masters"></textarea>
+                    <textarea name="s-masters" id="s-masters" placeholder="Sound Masters"></textarea> <br>
+                <input type="submit" value="Generate" class="submit-button">
+            </form>
+        </div>
+        <div class="test"></div>
+    </main>
+    <script src="{{url_for('static', filename='js/emailvalidation.js')}}"></script>
+{% endblock %}

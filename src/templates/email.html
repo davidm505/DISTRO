@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block style %}
-    <link rel="stylesheet" href="../static/email-style.css">
+    <link rel="stylesheet" href="../static/styles/email-style.css">
 {% endblock %}
 
 {% block body %}
@@ -15,7 +15,7 @@
                 <div class=" col">
                     <div class="card" style="width: 15rem;" id="br-card">
                         <a href="/generator/break/{{project_id}}"> 
-                            <img class="card-img-top" src="../static/breakCard.png" alt="poster">
+                            <img class="card-img-top" src="{{ url_for('static', filename='images/breakCard.png') }}" alt="poster">
                             <div class="card-body">
                                 <h5 class="card-title">Break</h5>
                             </div>
@@ -25,7 +25,7 @@
                 <div class="col">
                     <div class="card" style="width: 15rem;" id="wr-card">
                         <a href="/generator/wrap/{{project_id}}">
-                            <img class="card-img-top" src="../static/WrapCard.png" alt="poster">
+                            <img class="card-img-top" src="../static/images/WrapCard.png" alt="poster">
                             <div class="card-body">
                                 <h5 class="card-title">Wrap</h5>
                             </div>
@@ -35,7 +35,7 @@
                 <div class="col">
                     <div class="card" style="width: 15rem;" id="comp-card">
                         <a href="/generator/complete/{{project_id}}">
-                            <img class="card-img-top" src="../static/compCard.png" alt="poster">
+                            <img class="card-img-top" src="../static/images/compCard.png" alt="poster">
                             <div class="card-body">
                                 <h5 class="card-title">Complete</h5>
                             </div>
