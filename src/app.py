@@ -115,7 +115,7 @@ def email(project_id):
 
 
 @app.route("/generator/<email>/<proj_id>", methods=["GET", "POST"])
-@login_required
+# @login_required
 def generator(email, proj_id):
 
     rows = []
@@ -186,7 +186,8 @@ def generator(email, proj_id):
 
         crew = ''
         for item in distro:
-            crew += item[0]
+            print(item[0])
+            crew += item[0] + ' '
         
         email["distro"] = crew
         email["subject"] = subject_generation(results)

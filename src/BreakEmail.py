@@ -115,7 +115,7 @@ def subject_generation(dict):
 
     subject.append("{show_code}_{date_day}_{episode}_{shooting_day} - {am_pm_break} Received".format(
         show_code=dict["show_code"], date_day=(date+dict["day"]), episode=dict["ep"],
-        shooting_day=dict["shoot_day"], am_pm_break=dict["email"]
+        shooting_day=dict["shoot_day"], am_pm_break=dict["email"].capitalize()
     ))
 
     return subject
@@ -125,12 +125,12 @@ def body_generation(dict):
 
     body = []
 
-    body.append("{show_name} {episode} Day {shooting_day}, {month} {day}, {year} - {am_pm_break} Received.".format(
+    body.append('<strong>&ldquo;{show_name}&rdquo;</strong> {episode} Day {shooting_day}, {month} {day}, {year} - <strong>{am_pm_break} Received.</strong>'.format(
         show_name=dict["show_name"], episode=dict["ep"], shooting_day=dict["shoot_day"], month=month, day=dict["day"], year=year,
-        am_pm_break=dict["email"]
+        am_pm_break=dict["email"].capitalize()
     ))
     
-    body.append("Total Footage Received and Transferred: {trt} ({gigabytes} GBs).".format(
+    body.append("<br>Total Footage Received and Transferred: {trt} ({gigabytes} GBs).".format(
         trt=dict['trt'], gigabytes=dict['gb']
     ))
 

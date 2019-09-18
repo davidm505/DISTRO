@@ -36,13 +36,28 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
     "trt": dict["trt"],
     "c-masters": dict["cm"],
     "s-masters": dict["sm"]}, function(response){
+        
         if (!response) {
             event.preventDefault();
             alert("Hey no response");
         }
-        
-        document.querySelector(".test").innerHTML = "HEy!";
-        alert("Hey this worked!");
+        document.querySelector(".email-subject").innerHTML = response["subject"] + "<br>";
+        let body = document.querySelector(".email-body");
+        body.innerHTML = response["body"][0] + "<br>" + response["body"][1] + "<br><br>" + response["body"][2];
+
+        document.querySelector(".email-distro").innerHTML = response["distro"];
     })
 
 })
+
+function copy(element) {
+
+   if (window.getSelection) {
+        var range = document.createRange();
+         range.selectNode(document.querySelector(element));
+         window.getSelection().removeAllRanges();
+         window.getSelection().addRange(range);
+         document.execCommand("copy");
+         window.getSelection().removeAllRanges();
+    }
+};

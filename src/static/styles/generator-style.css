@@ -17,6 +17,14 @@ textarea {
     color: white;
 }
 
+button {
+    background-color: #3e454d;
+    color: rgba(255, 255, 255, 0.8);
+    justify-self: end;
+    border: none;
+    font-size: 0.8rem;
+}
+
 ::placeholder {
     opacity: 1;
     color: rgba(145, 167, 192, 0.5);
@@ -42,6 +50,41 @@ textarea {
     margin-top: 3rem;
 }
 
-.test {
+.email-container {
+    background-color: #3E454D;
+    border: 1px solid #86C232;
+    margin-top: 3rem;
+    display: grid;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    justify-items: center;
+    margin-bottom: 1rem;
+
+}
+
+.email-subject {
+    justify-self: start;
+}
+
+.email-body,
+.email-subject,
+.email-distro {
+    border: 1px solid #3e454d;
+    background-color: #3E454D;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: left;
+}
+
+
+.email-subject,
+.email-body,
+.email-distro {
+    text-align: left;
     color: white;
+    overflow-wrap: break-word;
+    margin-bottom: 1rem;
+
+    border-bottom: 1px solid #000;
 }

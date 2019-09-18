@@ -30,9 +30,12 @@
             </form>
         </div>
         <div class="email-container">
-            <div class="email-subject"></div>
-            <div class="email-body"></div>
+            <button onclick="copy('.email-distro')">Copy</button>
             <div class="email-distro"></div>
+            <button class="btn-clipboard" onclick="copy('.email-subject')">Copy</button>
+            <div class="email-subject"></div>
+            <button onclick="copy('.email-body')" data-toggle="popover" data-content="Copied email body to clipboard!" >Copy</button>
+            <div class="email-body"></div>
         </div>
     </main>
     <script src="{{url_for('static', filename='js/emailvalidation.js')}}"></script>
