@@ -3,6 +3,14 @@ let url = queryString.slice(-7);
 let email = url.slice(5)
 let id = url.slice(-1)
 
+
+$(document).ready(function (){
+    
+    $(function () {
+        $('[data-toggle="popover"').tooltip();
+      })
+})
+
 let form = document.querySelector("form").addEventListener('submit', function(event){
 
     event.preventDefault();
@@ -19,8 +27,6 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
     for (key in dict){
 
         let value = dict[key];
-    
-        console.log(key + value);
     
         if (value == ""){
             event.preventDefault();

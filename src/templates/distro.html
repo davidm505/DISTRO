@@ -30,11 +30,11 @@
             </form>
         </div>
         <div class="email-container">
-            <button onclick="copy('.email-distro')">Copy</button>
+            <button onclick="copy('.email-distro')" data-toggle="popover" title="Copy Email Distro">Copy</button>
             <div class="email-distro"></div>
-            <button class="btn-clipboard" onclick="copy('.email-subject')">Copy</button>
+            <button class="btn-clipboard" onclick="copy('.email-subject')" data-toggle="popover" title="Copy Email Subject">Copy</button>
             <div class="email-subject"></div>
-            <button onclick="copy('.email-body')" data-toggle="popover" data-content="Copied email body to clipboard!" >Copy</button>
+            <button onclick="copy('.email-body')" data-toggle="popover" title="Copy Email Body" data-content="Copied email body to clipboard!" >Copy</button>
             <div class="email-body"></div>
         </div>
     </main>
