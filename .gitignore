@@ -12,3 +12,5 @@ src/static/images/
 # Ignore Files
 .Python
 src/test.sqlite.sqbpro
+
+*.pyc

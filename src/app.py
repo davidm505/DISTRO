@@ -23,7 +23,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# declare db file
+# declare db files
 db_file = 'test.sqlite'
 db_crew = 'distro.sqlite3'
 
@@ -134,7 +134,7 @@ def generator(email, proj_id):
             return render_template("apology.html", error=proj_id)
 
         if email == 'break' or email == 'wrap':
-            return render_template("distro.html", email=email, project_id=proj_id)
+            return render_template("distro.html", email=email.capitalize(), project_id=proj_id)
     else:
         
         if email == 'break' or email == 'wrap':
@@ -219,8 +219,7 @@ def generator(email, proj_id):
 
                 c = conn.cursor()
 
-                c.execute(f"SELECT email FROM crew WHERE project_id=? AND {distro_email}=1",
-                (proj_id))
+                c.execute(f"SELECT email FROM crew WHERE project_id=? AND {distro_email}=1",(proj_id))
 
                 distro = c.fetchall()
 
