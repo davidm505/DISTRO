@@ -42,14 +42,14 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
 
     if (completeForm == true) {
 
-        console.log("This is running");
         $.post("/generator/" + dict["email"].toLowerCase() + "/" + id, 
         {"ep": dict["ep"],
         "shoot-day": dict["shootDay"],
         "gb": dict["gb"],
         "trt": dict["trt"],
         "c-masters": dict["cm"],
-        "s-masters": dict["sm"]}, function(response){
+        "s-masters": dict["sm"],
+        "email": dict["email"]}, function(response){
             
             if (!response) {
                 event.preventDefault();
@@ -57,6 +57,7 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
             }
     
             // Display email contianer
+            $('.email-container').fadeIn();
             document.querySelector(".email-container").style.display = "grid";
     
             document.querySelector(".email-subject").innerHTML = response["subject"] + "<br>";

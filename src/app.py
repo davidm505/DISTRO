@@ -115,7 +115,7 @@ def email(project_id):
 
 
 @app.route("/generator/<email>/<proj_id>", methods=["GET", "POST"])
-# @login_required
+@login_required
 def generator(email, proj_id):
 
     rows = []
@@ -136,61 +136,103 @@ def generator(email, proj_id):
         if email == 'break' or email == 'wrap':
             return render_template("distro.html", email=email, project_id=proj_id)
     else:
-
-        results = {}
-    
-        results["ep"] = request.form.get("ep")
-        results["shoot_day"] = request.form.get("shoot-day")
-        results["gb"] = request.form.get("gb")
-        results["trt"] = request.form.get("trt")
-        results["cm"] = request.form.get("c-masters")
-        results["sm"] = request.form.get("s-masters")
-        results["email"] = email
-
-        print("These are the results", results)
-
-        for key in results:
-            value = results[key]
-
-            if value == '':
-                return render_template("apology.html", error="Please fill out all fields.")
-
-        results["cm"] = camera_rolls(results["cm"])
-        results["sm"] = sound_rolls(results["sm"])
-        results["day"] = day_check()
         
-        with sqlite3.connect(db_file) as conn:
+        if email == 'break' or email == 'wrap':
+
+            results = {}
+
+            results["ep"] = request.form.get("ep")
+            results["shoot_day"] = request.form.get("shoot-day")
+            results["gb"] = request.form.get("gb")
+            results["trt"] = request.form.get("trt")
+            results["cm"] = request.form.get("c-masters")
+            results["sm"] = request.form.get("s-masters")
+            results["email"] = request.form.get("email")
+
+            for key in results:
+                value = results[key]
+
+                if value == '':
+                    return render_template("apology.html", error="Please fill out all fields.")
+
+            results["cm"] = camera_rolls(results["cm"])
+            results["sm"] = sound_rolls(results["sm"])
+            results["day"] = day_check()
+
+            # Add media to database
+            with sqlite3.connect(db_crew) as conn:
+                
+
+                # check which break it is
+                # set variables for database
+                am = 0
+                if results["email"].lower() == "break":
+                    am = 1
+                else:
+                    am = 0
+
+                c = conn.cursor()
+
+                c.execute('SELECT * FROM latest_media WHERE break=? AND project_id=?', 
+                    (am, proj_id,))
+                
+                rows = c.fetchall()
+
+                
+                if len(rows) > 0:
+                    
+                    # update table
+                    sql ='''UPDATE latest_media
+                            SET camera_masters = ?,
+                                sound_masters = ?,
+                                shoot_day = ?
+                            WHERE project_id = ?
+                            AND break = ?'''
+                    
+                    c.execute(sql, (results["cm"], results["sm"], results["shoot_day"], proj_id, am))
+
+                else:
+
+                    #create row
+                    c.execute('''INSERT INTO latest_media VALUES 
+                        (?,?,?,?,?)''',
+                        (proj_id, am, results["cm"], results["sm"], results["shoot_day"]))
             
-            c = conn.cursor()
+            with sqlite3.connect(db_file) as conn:
+                
+                c = conn.cursor()
 
-            c.execute('SELECT project_code, project_name FROM projects WHERE project_id=? AND user_id=?',
-                (proj_id, session.get("user_id"),))
-        
-            rows = c.fetchall()
-
-            results["show_code"] = rows[0][0]
+                c.execute('SELECT project_code, project_name FROM projects WHERE project_id=? AND user_id=?',
+                    (proj_id, session.get("user_id"),))
             
-            results["show_name"] = rows[0][1]
-        
-        distro = []
-        with sqlite3.connect(db_crew) as conn:
+                rows = c.fetchall()
 
-            c = conn.cursor()
-
-            c.execute("SELECT email FROM crew WHERE project_id=?",
-            (proj_id))
-
-            distro = c.fetchall()
-
-        email = {}
-
-        crew = ''
-        for item in distro:
-            print(item[0])
-            crew += item[0] + ' '
-        
-        email["distro"] = crew
-        email["subject"] = subject_generation(results)
-        email["body"] = body_generation(results)
+                results["show_code"] = rows[0][0]
+                
+                results["show_name"] = rows[0][1]
             
-        return jsonify(email)
+            distro = []
+
+            distro_email = results['email'].lower() + "_distro"
+
+            with sqlite3.connect(db_crew) as conn:
+
+                c = conn.cursor()
+
+                c.execute(f"SELECT email FROM crew WHERE project_id=? AND {distro_email}=1",
+                (proj_id))
+
+                distro = c.fetchall()
+
+            email = {}
+
+            crew = ''
+            for item in distro:
+                print(item[0])
+                crew += item[0] + ' '
+            
+            email["distro"] = crew
+            email["subject"] = subject_generation(results)
+            email["body"] = body_generation(results)
+                
+            return jsonify(email)
