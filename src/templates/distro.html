@@ -21,11 +21,17 @@
                 <input type="text" name="ep" id="ep" placeholder="Episode" maxlength="10" autofocus>
                 <input type="text" name="shoot-day" id="shoot-day" placeholder="Shoot Day" maxlength="10">
                 <input type="number" name="gb" id="gb" placeholder="Total GB" step="0.01" min="0.01">
-                <input type="text" name="trt" id="trt" placeholder="Total Runtime" minlength="11" maxlength="11"> <br>
+                <input type="text" name="trt" id="trt" placeholder="Total Runtime" minlength="11" maxlength="11"> 
+                <select class="custom-select" id="inputGroupSelect01">
+                    <option selected disabled>Select Email</option>
+                    <option value="Break">Break</option>
+                    <option value="Wrap">Wrap</option>
+                </select><br>
                 <div class="masters">
                     <h5 class="label">#2   Master Media</h5>
                     <textarea name="c-masters" id="c-masters" placeholder="Camera Masters"></textarea>
                     <textarea name="s-masters" id="s-masters" placeholder="Sound Masters"></textarea> <br>
+                </div>
                 <input type="submit" value="Generate" class="submit-button">
             </form>
         </div>

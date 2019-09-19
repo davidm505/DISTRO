@@ -13,9 +13,13 @@ $(document).ready(function (){
 
 let form = document.querySelector("form").addEventListener('submit', function(event){
 
-    event.preventDefault();
+    event.preventDefault()
+
+    let emailSelect = document.querySelector(".custom-select");
 
     let dict = {};
+
+    let completeForm = true;
 
     dict["ep"] = document.querySelector("#ep").value;
     dict["shootDay"] = document.querySelector("#shoot-day").value;
@@ -23,36 +27,46 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
     dict["trt"] = document.querySelector("#trt").value;
     dict["cm"] = document.querySelector('#c-masters').value;
     dict["sm"] = document.querySelector("#s-masters").value;
+    dict["email"] = emailSelect.options[emailSelect.selectedIndex].text;
 
+    // Check for any items in form that were not filled out.
     for (key in dict){
 
         let value = dict[key];
     
         if (value == ""){
-            event.preventDefault();
-            alert("Please fill out all fields!");
+            completeForm = false;
             break;
         }
     }
 
-    $.post("/generator/" + url, 
-    {"ep": dict["ep"],
-    "shoot-day": dict["shootDay"],
-    "gb": dict["gb"],
-    "trt": dict["trt"],
-    "c-masters": dict["cm"],
-    "s-masters": dict["sm"]}, function(response){
-        
-        if (!response) {
-            event.preventDefault();
-            alert("Hey no response");
-        }
-        document.querySelector(".email-subject").innerHTML = response["subject"] + "<br>";
-        let body = document.querySelector(".email-body");
-        body.innerHTML = response["body"][0] + "<br>" + response["body"][1] + "<br><br>" + response["body"][2];
+    if (completeForm == true) {
 
-        document.querySelector(".email-distro").innerHTML = response["distro"];
-    })
+        console.log("This is running");
+        $.post("/generator/" + dict["email"].toLowerCase() + "/" + id, 
+        {"ep": dict["ep"],
+        "shoot-day": dict["shootDay"],
+        "gb": dict["gb"],
+        "trt": dict["trt"],
+        "c-masters": dict["cm"],
+        "s-masters": dict["sm"]}, function(response){
+            
+            if (!response) {
+                event.preventDefault();
+                alert("Hey no response");
+            }
+    
+            // Display email contianer
+            document.querySelector(".email-container").style.display = "grid";
+    
+            document.querySelector(".email-subject").innerHTML = response["subject"] + "<br>";
+            let body = document.querySelector(".email-body");
+            body.innerHTML = response["body"][0] + "<br>" + response["body"][1] + "<br><br>" + response["body"][2];
+    
+            document.querySelector(".email-distro").innerHTML = response["distro"];
+        })
+    }
+
 
 })
 

@@ -17,32 +17,32 @@
                         <a href="/generator/break/{{project_id}}"> 
                             <img class="card-img-top" src="{{ url_for('static', filename='images/breakCard.png') }}" alt="poster">
                             <div class="card-body">
-                                <h5 class="card-title">Break</h5>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card" style="width: 15rem;" id="wr-card">
-                        <a href="/generator/wrap/{{project_id}}">
-                            <img class="card-img-top" src="../static/images/WrapCard.png" alt="poster">
-                            <div class="card-body">
-                                <h5 class="card-title">Wrap</h5>
+                                <h5 class="card-title">Break/Wrap</h5>
                             </div>
                         </a>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card" style="width: 15rem;" id="comp-card">
-                        <a href="/generator/complete/{{project_id}}">
-                            <img class="card-img-top" src="../static/images/compCard.png" alt="poster">
-                            <div class="card-body">
-                                <h5 class="card-title">Complete</h5>
-                            </div>
-                        </a>
+                            <a href="/generator/complete/{{project_id}}">
+                                <img class="card-img-top" src="../static/images/compCard.png" alt="poster">
+                                <div class="card-body">
+                                    <h5 class="card-title">Complete</h5>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card" style="width: 15rem;" id="wr-card">
+                            <a href="/generator/wrap/{{project_id}}">
+                                <img class="card-img-top" src="../static/images/WrapCard.png" alt="poster">
+                                <div class="card-body">
+                                    <h5 class="card-title">Distro</h5>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
         </div>
     </main>
 {% endblock %}
