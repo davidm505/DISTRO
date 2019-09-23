@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block title %}
+{{email}}
+{% endblock %}
+
+{% block style %}
+    
+{% endblock %}
+
+{% block body %}
+    <main>
+        <div class="form-container">
+            <form action="/generator/complete/{{project_id}}" method="POST">
+                <h5>#1 Initial Information</h5>
+                <input type="text" name="ep" id="ep" placeholder="Episode" autofocus maxlength="10">
+                <input type="text" name="shoot-day" id="shoot-day" placeholder="Shoot Day" maxlength="10">
+                <input type="number" name="gb" id="gb" placeholder="Total GB" step="0.01" min="0.01">
+                <div class="masters">
+                    <h5 class="label">#2   Additonal Master Media</h5>
+                    <textarea name="c-masters" id="c-masters" placeholder="Camera Masters"></textarea>
+                    <textarea name="s-masters" id="s-masters" placeholder="Sound Masters"></textarea> <br>
+                </div>
+                <h5>#3 TRTs</h5>
+                <button onclick="duplicate()" type="button">Add TRT</button>
+                <div class="trt-container">
+                    <div id="trt-group1">
+                        <input type="text" name="ep-1" id="ep-1" maxlength="10" placeholder="Episode">
+                        <input type="text" name="trt-1" id="trt-1" placeholder="Total Runtime" maxlength="11" minlength="11">
+                        <input type="text" name="ctrt-1" id="ctrt-1" placeholder="Total Circle Runtime" maxlength="11" minlength="11">
+                    </div>
+                </div>
+                <input type="submit" value="Generate">
+             </form>
+        </div>
+        <div class="email-container"></div>
+    </main>
+    <!-- <script src="{{url_for('static', filename='js/emailvalidation.js')}}"></script> -->
+    <script src="{{url_for('static', filename='js/complete.js')}}"></script>
+{% endblock %}

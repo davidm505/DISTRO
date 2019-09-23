@@ -43,14 +43,18 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
     if (completeForm == true) {
 
         $.post("/generator/" + dict["email"].toLowerCase() + "/" + id, 
-        {"ep": dict["ep"],
-        "shoot-day": dict["shootDay"],
-        "gb": dict["gb"],
-        "trt": dict["trt"],
-        "c-masters": dict["cm"],
-        "s-masters": dict["sm"],
-        "email": dict["email"]}, function(response){
-            
+        {
+            "ep": dict["ep"],
+            "shoot-day": dict["shootDay"],
+            "gb": dict["gb"],
+            "trt": dict["trt"],
+            "c-masters": dict["cm"],
+            "s-masters": dict["sm"],
+            "test": ["john", "david"],
+            "email": dict["email"]
+        }, 
+        function(response){
+                
             if (!response) {
                 event.preventDefault();
                 alert("Hey no response");

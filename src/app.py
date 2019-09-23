@@ -7,6 +7,7 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import login_required
 from BreakEmail import camera_rolls, sound_rolls, day_check, body_generation, subject_generation
+from sqlhelpers import create_connection, update_break, create_break
 
 # Configure application 
 app = Flask(__name__)
@@ -120,49 +121,63 @@ def generator(email, proj_id):
 
     rows = []
     if request.method == "GET":
-    
-        with sqlite3.connect(db_file) as conn:
 
-            c = conn.cursor()
+        conn = create_connection(db_file)
 
-            c.execute("SELECT * FROM projects WHERE project_id=? AND user_id=?", 
+        with conn:
+            
+            cur = conn.cursor()
+
+            cur.execute("SELECT * FROM projects WHERE project_id=? AND user_id=?", 
                 (proj_id, session.get("user_id"),))
 
-            rows = c.fetchall()
+            rows = cur.fetchall()
 
+        # check if user has access to project
         if len(rows) < 1:
             return render_template("apology.html", error=proj_id)
 
+        # render break template
         if email == 'break' or email == 'wrap':
             return render_template("distro.html", email=email.capitalize(), project_id=proj_id)
+        elif email == 'complete':
+            return render_template("complete.html", email=email.capitalize(), project_id=proj_id)
     else:
-        
+        print(request.form.getlist("test[]"))
+        print(request.form.get('ep'))
+
+        # get all results from AJAX
+        results = {}
+
+        results["ep"] = request.form.get("ep")
+        results["shoot_day"] = request.form.get("shoot-day")
+        results["gb"] = request.form.get("gb")
+        # results["trt"] = request.form.getlist("trt")
+        results["cm"] = request.form.get("c-masters")
+        results["sm"] = request.form.get("s-masters")
+        results["email"] = request.form.get("email")
+
+        print(results)
+
+        # check if any information is missing
+        for key in results:
+            value = results[key]
+
+            if value == '':
+                return render_template("apology.html", error="Please fill out all fields.")
+
+        # format master media
+        # get current day
+        results["cm"] = camera_rolls(results["cm"])
+        results["sm"] = sound_rolls(results["sm"])
+        results["day"] = day_check()
+
         if email == 'break' or email == 'wrap':
 
-            results = {}
-
-            results["ep"] = request.form.get("ep")
-            results["shoot_day"] = request.form.get("shoot-day")
-            results["gb"] = request.form.get("gb")
-            results["trt"] = request.form.get("trt")
-            results["cm"] = request.form.get("c-masters")
-            results["sm"] = request.form.get("s-masters")
-            results["email"] = request.form.get("email")
-
-            for key in results:
-                value = results[key]
-
-                if value == '':
-                    return render_template("apology.html", error="Please fill out all fields.")
-
-            results["cm"] = camera_rolls(results["cm"])
-            results["sm"] = sound_rolls(results["sm"])
-            results["day"] = day_check()
-
             # Add media to database
-            with sqlite3.connect(db_crew) as conn:
+            conn = create_connection(db_crew)
+            with conn:
                 
-
                 # check which break it is
                 # set variables for database
                 am = 0
@@ -171,41 +186,32 @@ def generator(email, proj_id):
                 else:
                     am = 0
 
-                c = conn.cursor()
+                cur = conn.cursor()
 
-                c.execute('SELECT * FROM latest_media WHERE break=? AND project_id=?', 
-                    (am, proj_id,))
+                # check if break row exists in DB                
+                cur.execute('SELECT * FROM latest_media WHERE break=? AND project_id=?', 
+                           (am, proj_id,))
                 
-                rows = c.fetchall()
+                rows = cur.fetchall()
 
-                
+                # update row in DB
                 if len(rows) > 0:
-                    
-                    # update table
-                    sql ='''UPDATE latest_media
-                            SET camera_masters = ?,
-                                sound_masters = ?,
-                                shoot_day = ?
-                            WHERE project_id = ?
-                            AND break = ?'''
-                    
-                    c.execute(sql, (results["cm"], results["sm"], results["shoot_day"], proj_id, am))
+                    update_break(conn,  (results["cm"], results["sm"], results["shoot_day"], proj_id, am))
 
+                # create row in DB                    
                 else:
+                    create_break(conn, (proj_id, am, results["cm"], results["sm"], results["shoot_day"]))
 
-                    #create row
-                    c.execute('''INSERT INTO latest_media VALUES 
-                        (?,?,?,?,?)''',
-                        (proj_id, am, results["cm"], results["sm"], results["shoot_day"]))
-            
-            with sqlite3.connect(db_file) as conn:
+            conn = create_connection(db_file)
+            with conn:
                 
-                c = conn.cursor()
+                cur = conn.cursor()
 
-                c.execute('SELECT project_code, project_name FROM projects WHERE project_id=? AND user_id=?',
+                # get show name and show code
+                cur.execute('SELECT project_code, project_name FROM projects WHERE project_id=? AND user_id=?',
                     (proj_id, session.get("user_id"),))
             
-                rows = c.fetchall()
+                rows = cur.fetchall()
 
                 results["show_code"] = rows[0][0]
                 
@@ -215,13 +221,15 @@ def generator(email, proj_id):
 
             distro_email = results['email'].lower() + "_distro"
 
-            with sqlite3.connect(db_crew) as conn:
+            # select distro for break email
+            conn = create_connection(db_crew)
+            with conn:
 
-                c = conn.cursor()
+                cur = conn.cursor()
 
-                c.execute(f"SELECT email FROM crew WHERE project_id=? AND {distro_email}=1",(proj_id))
+                cur.execute(f"SELECT email FROM crew WHERE project_id=? AND {distro_email}=1",(proj_id))
 
-                distro = c.fetchall()
+                distro = cur.fetchall()
 
             email = {}
 
@@ -235,3 +243,30 @@ def generator(email, proj_id):
             email["body"] = body_generation(results)
                 
             return jsonify(email)
+
+        elif email == "complete":
+
+            print("Complete post request received!")
+
+            # qeue DB get exisiting media from break/wrap
+            conn = create_connection(db_crew)
+            rows = []
+            with conn:
+
+                cur = conn.cursor()
+
+                sql ='''SELECT 
+                            camera_masters, sound_masters
+                        FROM
+                            latest_media
+                        WHERE
+                            project_id = ?
+                        AND
+                            shoot_day = ?'''
+
+                cur.execute(sql, (proj_id, results["shoot_day"]))
+
+                rows = cur.fetchall()
+
+           # add in new masters if not in email already
+            return "done"
