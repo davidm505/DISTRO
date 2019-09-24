@@ -1,5 +1,5 @@
 import os
-
+import json
 from flask import Flask, redirect, render_template, session, request, jsonify
 from flask_session import Session
 from tempfile import mkdtemp
@@ -7,6 +7,7 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import login_required
 from BreakEmail import camera_rolls, sound_rolls, day_check, body_generation, subject_generation
+from DailiesComplete import episode_organizer
 from sqlhelpers import create_connection, update_break, create_break
 
 # Configure application 
@@ -143,8 +144,11 @@ def generator(email, proj_id):
         elif email == 'complete':
             return render_template("complete.html", email=email.capitalize(), project_id=proj_id)
     else:
-        print(request.form.getlist("test[]"))
-        print(request.form.get('ep'))
+
+        print("post request received!")
+
+        test = request.form["test"]
+        print(test)
 
         # get all results from AJAX
         results = {}
@@ -152,7 +156,7 @@ def generator(email, proj_id):
         results["ep"] = request.form.get("ep")
         results["shoot_day"] = request.form.get("shoot-day")
         results["gb"] = request.form.get("gb")
-        # results["trt"] = request.form.getlist("trt")
+        results["trt"] = request.form["test"]
         results["cm"] = request.form.get("c-masters")
         results["sm"] = request.form.get("s-masters")
         results["email"] = request.form.get("email")
@@ -246,7 +250,10 @@ def generator(email, proj_id):
 
         elif email == "complete":
 
-            print("Complete post request received!")
+            # load JSON trt data
+            results["trt"] = json.loads(results['trt'])
+
+            eps = episode_organizer(results["trt"])
 
             # qeue DB get exisiting media from break/wrap
             conn = create_connection(db_crew)
@@ -269,4 +276,4 @@ def generator(email, proj_id):
                 rows = cur.fetchall()
 
            # add in new masters if not in email already
-            return "done"
+            return jsonify(True)

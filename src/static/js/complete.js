@@ -3,9 +3,11 @@ clean(document.body);
 
 let form = document.querySelector("form").addEventListener('submit', function(event) {
 
+    event.preventDefault();
+
     let dict = {};
 
-    completeForm = false;
+    completeForm = true;
 
     dict['ep'] = document.querySelector('#ep').value;
     dict['shootDay'] = document.querySelector("#shoot-day").value;
@@ -19,6 +21,7 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
         let value = dict[key];
 
         if (value == "") {
+            console.log(value);
             alert("please fill out all fields!");
             completeForm = false;
             break;
@@ -34,15 +37,15 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
     
     if (completeForm == true) {
 
-        $.post("/generator/complete/") + "3",
+        $.post("/generator/complete/" + "3",
             {
                 "ep": dict["ep"],
-                "shoot_day": dict["shootDay"],
+                "shoot-day": dict["shootDay"],
                 "gb": dict["gb"],
-                "cm": dict["cm"],
-                "sm": dict["sm"],
-                "test": ["david", "john"],
-                "email": dict["email"]
+                "c-masters": dict["cm"],
+                "s-masters": dict["sm"],
+                "email": dict["email"], 
+                "test": JSON.stringify(dict["trt"])
             }, 
             function(response) {
                 
@@ -50,9 +53,9 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
                     alert("Hey there was no response!");
                 }
                 
-                alert('Response back!');
+                alert(response);
             }
-    }
+        )}
 });
 
 
