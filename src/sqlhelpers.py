@@ -53,3 +53,57 @@ def create_break(conn, values):
 
     cur.execute(sql, values)
     cur.commit()
+
+def get_show_code(conn, values):
+    '''
+    returns show code
+    :param connection:
+    :param values - project id and user id:
+    '''
+    sql ='''SELECT 
+                project_code, 
+                project_name 
+            FROM 
+                projects 
+            WHERE 
+                project_id = ? 
+            AND 
+                user_id = ?'''
+    
+    cur = conn.cursor()
+
+    cur.excecute(sql, values)
+    
+    rows = cur.fetchall()
+
+    show_code = rows[0][0]
+    
+    return show_code
+
+
+def get_show_name(conn, values):
+    '''
+    returns show name
+    :param connection:
+    :param values - project id, user id: 
+    '''
+
+    sql ='''SELECT 
+                project_code, 
+                project_name 
+            FROM 
+                projects 
+            WHERE 
+                project_id = ? 
+            AND 
+                user_id = ?''' 
+
+    cur = conn.cursor()
+
+    cur.excecute(sql, values)
+
+    rows = cur.fetchall()
+
+    show_name = rows[0][1]
+
+    return show_name
