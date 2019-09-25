@@ -5,6 +5,11 @@ import json
 import webbrowser
 
 
+# Date Variables
+date = datetime.today().strftime('%Y%m')
+month = datetime.today().strftime('%B')
+year = datetime.today().strftime('%Y')
+
 
 class Organizer:
 
@@ -77,57 +82,6 @@ class Organizer:
     def __str__(self):
         return self.media
 
-def email_distro():
-
-    email_distro_list = ''
-
-    with open(json_path,'r') as f:
-        distro_dict = json.load(f)
-
-    for member in distro_dict["Complete Email"]:
-        email_distro_list += (member['Email'] + ' ')
-    
-    return email_distro_list
-
-def stills_distro():
-
-    still_distro_list = ''
-
-    with open(json_path, 'r') as f:
-        distro_dict = json.load(f)
-
-    for member in distro_dict["Stills Email"]:
-        still_distro_list += (member['Email'] + ' ')
-
-    return still_distro_list
-
-def day_check():
-    '''
-        Checks the current hour and adjusts the day if it past midnight and before noon
-    '''
-
-    hour = datetime.today().strftime('%H')
-
-    hour = int(hour)
-
-    if hour in range(0, 12):
-        yesterday = datetime.today() - timedelta(days=1)
-        return yesterday.strftime('%d')
-    else:
-        return datetime.today().strftime('%d')
-
-def episode_gatherer():
-    episodes = []
-
-    while True:
-        episode_num = str(input('Please Enter the Episode Number: '))
-        episode_ctrt = str(input("Please Enter the Circle TRT: "))
-        episode_trt = str(input("Please Enter the Total TRT: "))
-        episodes.append((episode_num, episode_ctrt, episode_trt))
-
-        cont = input("Are there more episode? [y/n]: ")
-        if not cont.lower() in ('y' or 'yes'):
-            return episodes
 
 def episode_organizer(eps, day):
 
@@ -143,6 +97,7 @@ def episode_organizer(eps, day):
                         + "Total Editorial TRT: " + ep_block["trt"] + '<br><br>')
 
     return organized_ep
+
 
 def shuttle_organizer():
     '''
@@ -166,6 +121,7 @@ def shuttle_organizer():
 
         return appended_shuttle_list
 
+
 def camera_roll_organizer():
     '''
         Calls for input of camera roll(s).
@@ -183,6 +139,7 @@ def camera_roll_organizer():
         new_camera_rolls = Organizer(camera_rolls)
         return new_camera_rolls.cam_reg_ex().upper()
 
+
 def sound_roll_organizer():
     """[Prompts for sound roll input,]
 
@@ -199,113 +156,90 @@ def sound_roll_organizer():
 
         return new_sound_roll.sound_regex().upper()
 
-def discrepancy():
+
+def complete_subject(dict):
+    pass
+    subject = f'''
+        {dict["show_code"]}_{date + dict["day"]}_{dict["ep"]}_{dict["shoot_day"]} - Dailies Complete
     '''
-        Calls for input of discrepancies
 
-        Returns:
-                If no discrepancies, returns N/A.
-                Else returns the discrepancies.
-        '''
+    return subject
 
-    discrep = str(input("Enter Discrepancies. If none, enter N: "))
 
-    if discrep.upper() == 'N':
-        discrep = 'N/A'
+def complete_body(dict):
+    """Generates Complete Email body in HTML
+    
+    Arguments:
+        dict {dictionary} -- dictionary containing trts, master media, shoot day,
+                            current day, current ep, potential ep & trt groups,
+                            show name, show code.
+    
+    Returns:
+        string -- Complete email body in html
+    """
 
-    return discrep
+    body = f'''
+        <div>
+            <strong>\"{dict["show_name"]}\"</strong>
+            <br>
+            Shoot Date: {date + dict["day"]}
+            <br>
+            Transfer Date: {date + dict["day"]}
+        </div>
+            <br> 
+            <p>
+                All dailies work for <strong>\"{dict["show_name"]}\"</strong> {dict["ep"]} Day {dict["shoot_day"]}, {month} {dict["day"]}, {year} is now complete.
+            </p>
+            <br> 
+            <p>
+                <strong>Discrepancy Highlights:</strong> {dict["discrepancies"]}
+            </p>
+            <br> 
+            <p>
+                <strong>Editorial Files:</strong> All Editorial Dailies for <strong>\"{dict["show_name"]}\"</strong> 
+                {dict["ep"]} Day {dict["shoot_day"]}, have been transferred over Aspera and can be found on The NEXIS.
+            </p>
+            <br> 
+            <p>
+                <strong>PIX:</strong> All PIX Screeners for <strong>\"{dict["show_name"]}\"</strong> {dict["ep"]}, 
+                Day {dict["shoot_day"]}, have been uploaded to the Dailies unreleased folder.
+            </p>
+            <br> 
+            <p>
+                The <strong>Break & Wrap</strong> On Set Rotation Drives are available for pickup from 
+                the dailies office at any time. Building A room 211.
+            </p>
+            <br> 
+            <p>
+                <strong>Reports:</strong>  Please find all attached reports from production and the dailies lab. 
+                The following Rotation Drives and Camera Rolls have been received, backed up, 
+                and QC\'d at the lab.
+            </p>
+            <br> 
+            <div>
+                <strong>Drives Received:</strong>
+                <br>
+                {dict["shuttles"]}
+                <br>
+                <strong>Camera Rolls Completed:</strong>
+                <br>
+                {dict["cm"]}
+                <br>
+                <br>
+                <strong>Sound Rolls:</strong>
+                <br>
+                {dict["sm"]}
+            </div>
+            <br> 
+            <p>
+                {dict["trts"]}
+                Total TB: {dict["gb"]}
+            </p>
+            <br><br>
+    '''
 
-# def complete_email():
+    return body
 
-#     # Create Txt File
-#     f = open('Complete.txt', 'w')
-#     f.write(distr_list + '\n\n')
-#     f.write(f'{show_code}_{date + day}_{episode}_{shooting_day} - Dailies Complete')
-#     f.write(f'\n\n\"{show_name}\"\nShoot Date: {date + day}\nTransfer Date: {date + day}')
-#     f.write(f'\n\nAll dailies work for \"{show_name}\" {episode} Day {shooting_day}, {month} {day}, {year} is now complete.')
-#     f.write(f'\n\nDiscrepancy Highlights: {discrepancies}')
-#     f.write(f'\n\nEditorial Files: All Editorial Dailies for {show_name} {episode} Day {shooting_day}, have been transferred over Aspera and can be found on The NEXIS.')
-#     f.write(f'\n\nPIX: All PIX Screeners for {show_name} {episode}, Day {shooting_day}, have been uploaded to the Dailies unreleased folder.')
-#     f.write(f'\n\nThe Break & Wrap On Set Rotation Drives are available for pickup from the dailies office at any time.  Building A room 216.')
-#     f.write(f'\n\nReports:  Please find all attached reports from production and the dailies lab. The following Rotation Drives and Camera Rolls have been received, backed up, and QC’d at the lab.')
-#     f.write(f'\n\nDrives Received:\n{shuttles}\nCamera Rolls Completed:\n{camera_rolls}\n\nSound Rolls:\n{sound_rolls}')
-#     f.write(f'\n\n{ep_list}Total GB: {gigabytes}')
-#     f.close()
-
-#     complete_email = f'''
-#     <html>
-#         <title>Dailies Complete</title>
-#         <body>
-#             <h1>Dailies Complete</h1>
-#             <p>
-#                 {distr_list}
-#             </p>
-#             <br>
-#             <p>
-#                 {show_code}_{date + day}_{episode}_{shooting_day} - Dailies Complete
-#             </p>
-#             <br> 
-#             <div>
-#                 <strong>\"{show_name}\"</strong>
-#                 <br>
-#                 Shoot Date: {date + day}
-#                 <br>
-#                 Transfer Date: {date + day}
-#             </div>
-#             <br> 
-#             <p>
-#                 All dailies work for <strong>\"{show_name}\"</strong> {episode} Day {shooting_day}, {month} {day}, {year} is now complete.
-#              </p>
-#              <br> 
-#             <p>
-#                 <strong>Discrepancy Highlights:</strong> {discrepancies}
-#             </p>
-#             <br> 
-#             <p>
-#                 <strong>Editorial Files:</strong> All Editorial Dailies for <strong>\"{show_name}\"</strong> 
-#                 {episode} Day {shooting_day}, have been transferred over Aspera and can be found on The NEXIS.
-#             </p>
-#             <br> 
-#             <p>
-#                 <strong>PIX:</strong> All PIX Screeners for <strong>\"{show_name}\"</strong> {episode}, 
-#                 Day {shooting_day}, have been uploaded to the Dailies unreleased folder.
-#             </p>
-#             <br> 
-#             <p>
-#                 The <strong>Break & Wrap</strong> On Set Rotation Drives are available for pickup from 
-#                 the dailies office at any time. Building A room 211.
-#             </p>
-#             <br> 
-#             <p>
-#                 <strong>Reports:</strong>  Please find all attached reports from production and the dailies lab. 
-#                 The following Rotation Drives and Camera Rolls have been received, backed up, 
-#                 and QC\'d at the lab.
-#             </p>
-#             <br> 
-#             <div>
-#                 <strong>Drives Received:</strong>
-#                 <br>
-#                 {shuttles}
-#                 <br>
-#                 <strong>Camera Rolls Completed:</strong>
-#                 <br>
-#                 {camera_rolls}
-#                 <br>
-#                 <br>
-#                 <strong>Sound Rolls:</strong>
-#                 <br>
-#                 {sound_rolls}
-#             </div>
-#             <br> 
-#             <p>
-#                 {ep_list}
-#                 Total TB: {gigabytes}
-#             </p>
-#             <br><br><br>
-           
-#         </body>
-#     </html>
-#     '''
 
 #     stills_email = f'''
 #     <html>
@@ -327,13 +261,4 @@ def discrepancy():
 #         </body>
 #     </html>
 #     '''
-#     html_file.write(complete_email)
-#     stills_html.write(stills_email)
-#     html_file.close()
-#     stills_html.close()
     
-#     webbrowser.get('chrome').open_new_tab('file://' + stills_html_path)
-#     webbrowser.get('chrome').open_new_tab('file://' + html_path)
-
-
-# complete_email()
