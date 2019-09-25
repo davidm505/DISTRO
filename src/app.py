@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import login_required
 from BreakEmail import camera_rolls, sound_rolls, day_check, body_generation, subject_generation
 from DailiesComplete import episode_organizer
-from sqlhelpers import create_connection, update_break, create_break
+from sqlhelpers import create_connection, update_break, create_break, get_show_code, get_show_name
 
 # Configure application 
 app = Flask(__name__)
@@ -204,17 +204,11 @@ def generator(email, proj_id):
             conn = create_connection(db_file)
             with conn:
                 
-                cur = conn.cursor()
+                # get show code and show name
 
-                # get show name and show code
-                cur.execute('SELECT project_code, project_name FROM projects WHERE project_id=? AND user_id=?',
-                    (proj_id, session.get("user_id"),))
-            
-                rows = cur.fetchall()
-
-                results["show_code"] = rows[0][0]
+                results["show_code"] = get_show_code(conn, (proj_id, session.get("user_id")))
                 
-                results["show_name"] = rows[0][1]
+                results["show_name"] = get_show_name(conn, (proj_id, session.get("user_id")))
             
             distro = []
 
@@ -246,12 +240,29 @@ def generator(email, proj_id):
         elif email == "complete":
 
             print('Complete POST request received!')
+            
+            # TODO: get discrepancies
+
+            # TODO: get shuttles
+
+            conn = create_connection(db_file)
+            with conn:
+
+                # get show code and show name
+
+                results["show_code"] = get_show_code(conn, (proj_id, session.get("user_id")))
+
+                results["show_name"] = get_show_name(conn, (proj_id, session.get("user_id")))
+
+
+            # create email subject
+            email["subject"] = subject_generation(results)
 
             # load JSON trt data
             ep_group = json.loads(results['trt'])
 
-            eps = episode_organizer(ep_group, results["shoot_day"])
-            print("returned eps is: ", eps)
+            # get organized html string of trts
+            results["trts"] = episode_organizer(ep_group, results["shoot_day"])
 
             # qeue DB get exisiting media from break/wrap
             conn = create_connection(db_crew)
