@@ -129,18 +129,18 @@ def episode_gatherer():
         if not cont.lower() in ('y' or 'yes'):
             return episodes
 
-def episode_organizer(eps):
+def episode_organizer(eps, day):
 
     organized_ep = ''
 
-    i = 0
     for ep_block in eps:
-        for key in ep_block:
-            print(key)
-            # organized_ep += ('<strong>Running Times:</strong><br>'
-            #                 + ep_block[0] + ' Day ' + shooting_day + '<br>'
-            #                 + "Total Viewing TRT:" + ep_block[1] + '<br>'
-            #                 + "Total Editorial TRT: " + ep_block[2] + '<br><br>')
+        print(ep_block["ep"])
+        print(ep_block["trt"])
+        print(ep_block["ctrt"])
+        organized_ep += ('<strong>Running Times:</strong><br>'
+                        + ep_block["ep"] + ' Day ' + day + '<br>'
+                        + "Total Viewing TRT: " + ep_block["ctrt"] + '<br>'
+                        + "Total Editorial TRT: " + ep_block["trt"] + '<br><br>')
 
     return organized_ep
 

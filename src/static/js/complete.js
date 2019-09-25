@@ -7,8 +7,6 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
 
     let dict = {};
 
-    completeForm = true;
-
     dict['ep'] = document.querySelector('#ep').value;
     dict['shootDay'] = document.querySelector("#shoot-day").value;
     dict['gb'] = document.querySelector("#gb").value;
@@ -16,26 +14,15 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
     dict['sm'] = document.querySelector("#s-masters").value;
     dict['email'] = 'complete';
 
-    for ( key in dict) { 
-        
-        let value = dict[key];
-
-        if (value == "") {
-            console.log(value);
-            alert("please fill out all fields!");
-            completeForm = false;
-            break;
-        }
-    }
+    // let validForm = validation(dict)
 
     trt = trts();
 
     dict['trt'] = trt;
 
     console.log(dict);
-    // event.preventDefault();
     
-    if (completeForm == true) {
+    if (true) {
 
         $.post("/generator/complete/" + "3",
             {
@@ -62,11 +49,11 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
 let i = 2
 function duplicate() {
 
-    let ep = "ep-" + i;
+    let ep = "ep";
 
-    let trt = "trt-" + i;
+    let trt = "trt";
 
-    let ctrt = "ctrt-" + i;
+    let ctrt = "ctrt";
 
     let $trtGroup = $("<div/>", {
         id: "trt-group" + i
@@ -147,4 +134,16 @@ function trts() {
     return trtContainer; 
 }
 
+function validation(lst) {
 
+    for ( key in lst) { 
+        
+        let value = lst[key];
+
+        if (value == "") {
+            alert("please fill out all fields!");
+            return false;
+        }
+    }
+    return true;
+}

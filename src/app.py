@@ -147,9 +147,6 @@ def generator(email, proj_id):
 
         print("post request received!")
 
-        test = request.form["test"]
-        print(test)
-
         # get all results from AJAX
         results = {}
 
@@ -160,8 +157,6 @@ def generator(email, proj_id):
         results["cm"] = request.form.get("c-masters")
         results["sm"] = request.form.get("s-masters")
         results["email"] = request.form.get("email")
-
-        print(results)
 
         # check if any information is missing
         for key in results:
@@ -250,10 +245,13 @@ def generator(email, proj_id):
 
         elif email == "complete":
 
-            # load JSON trt data
-            results["trt"] = json.loads(results['trt'])
+            print('Complete POST request received!')
 
-            eps = episode_organizer(results["trt"])
+            # load JSON trt data
+            ep_group = json.loads(results['trt'])
+
+            eps = episode_organizer(ep_group, results["shoot_day"])
+            print("returned eps is: ", eps)
 
             # qeue DB get exisiting media from break/wrap
             conn = create_connection(db_crew)
