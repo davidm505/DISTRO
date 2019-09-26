@@ -9,16 +9,17 @@ input {
     border-right: none;
     border-left: none;
     color: white;
+    margin: 0.3rem;
 }
 
 textarea {
     background-color: #212529;
     border: 2px solid #3e454d;
     color: white;
+    margin: 0.3rem;
 }
 
 button {
-    margin-top: 1rem;
     background-color: #3e454d;
     color: rgba(255, 255, 255, 0.8);
     justify-self: end;
@@ -42,7 +43,7 @@ select, option {
 }
 
 .form-container {
-    margin-top: 5rem;
+    margin-top: 4rem;
     text-align: left;
 }
 
@@ -58,8 +59,9 @@ select, option {
     padding: 0px;
 }
 
-.masters {
-    margin-top: 5rem;
+.masters,
+.input-container {
+    margin-top: 4rem;
 }
 
 .submit-button {
