@@ -69,20 +69,26 @@ def camera_rolls(roll):
     Returns:
         Camera roll(s) as a string.
     '''
-    camRegEx = re.compile(r'[a-z]\d\d\d', re.IGNORECASE)
 
-    print(type(roll))
+    mag_list = []
+
+    cam_reg_ex = re.compile(r'''
+        ([a-z]              # Camera Letter
+        \d{3}               # Camera Numerical Roll
+        (_\d\d\d\d\d)?)     # (optional) FrameRate
+        ''', re.IGNORECASE | re.VERBOSE)
+
+    mtch_obj = cam_reg_ex.findall(roll)
+
+    for mag in mtch_obj:
+        mag_list.append(mag[0])
+        
+        mag_list.sort()
+        mtch_obj_string = ', '.join(mag_list)
+        print(mtch_obj_string)
+        return mtch_obj_string
     
-    mo = camRegEx.findall(roll)
     
-    mo.sort()
-    sorted_roll = ', '.join(mo)
-
-    return sorted_roll.upper()
-
-
-
-
 def sound_rolls(roll):
     '''
     Prompts for user input. 

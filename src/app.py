@@ -7,8 +7,8 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import login_required
 from BreakEmail import camera_rolls, sound_rolls, day_check, body_generation, subject_generation
-from DailiesComplete import episode_organizer
-from sqlhelpers import create_connection, update_break, create_break, get_show_code, get_show_name
+from DailiesComplete import episode_organizer, complete_subject, complete_body, camera_roll_organizer, str_to_lst, append_mags, shuttle_organizer, sound_roll_organizer
+from sqlhelpers import create_connection, update_break, create_break, get_show_code, get_show_name, get_distro
 
 # Configure application 
 app = Flask(__name__)
@@ -154,8 +154,6 @@ def generator(email, proj_id):
         results["shoot_day"] = request.form.get("shoot-day")
         results["gb"] = request.form.get("gb")
         results["trt"] = request.form["test"]
-        results["cm"] = request.form.get("c-masters")
-        results["sm"] = request.form.get("s-masters")
         results["email"] = request.form.get("email")
 
         # check if any information is missing
@@ -165,13 +163,16 @@ def generator(email, proj_id):
             if value == '':
                 return render_template("apology.html", error="Please fill out all fields.")
 
-        # format master media
         # get current day
-        results["cm"] = camera_rolls(results["cm"])
-        results["sm"] = sound_rolls(results["sm"])
         results["day"] = day_check()
 
         if email == 'break' or email == 'wrap':
+
+            results["cm"] = request.form.get("c-masters")
+            results["sm"] = request.form.get("s-masters")
+
+            results["cm"] = camera_rolls(results["cm"])
+            results["sm"] = sound_rolls(results["sm"])
 
             # Add media to database
             conn = create_connection(db_crew)
@@ -241,9 +242,14 @@ def generator(email, proj_id):
 
             print('Complete POST request received!')
             
-            # TODO: get discrepancies
+            results["discrepancies"] = request.form.get("discrepancies")
 
-            # TODO: get shuttles
+            results["shuttles"] = request.form.get("shuttles")
+
+            results["cm"] = request.form.get("c-masters")
+            results["sm"] = request.form.get("s-masters")
+
+            print(results)
 
             conn = create_connection(db_file)
             with conn:
@@ -254,10 +260,6 @@ def generator(email, proj_id):
 
                 results["show_name"] = get_show_name(conn, (proj_id, session.get("user_id")))
 
-
-            # create email subject
-            email["subject"] = subject_generation(results)
-
             # load JSON trt data
             ep_group = json.loads(results['trt'])
 
@@ -267,6 +269,7 @@ def generator(email, proj_id):
             # qeue DB get exisiting media from break/wrap
             conn = create_connection(db_crew)
             rows = []
+            distro = ''
             with conn:
 
                 cur = conn.cursor()
@@ -284,5 +287,33 @@ def generator(email, proj_id):
 
                 rows = cur.fetchall()
 
-           # add in new masters if not in email already
-            return jsonify(True)
+                distro = get_distro(conn, 'complete_distro', proj_id)
+            
+            # add in new masters if not in database already
+            # if no new maasters, insert databas masters
+            
+            if results['cm'] != "":
+                results["cm"] = append_mags(rows[0][0], results["cm"])
+            else:
+                results['cm'] = camera_roll_organizer(results[0][0])
+
+            if results["sm"] != "":
+                results["sm"] = append_mags(rows[0][1], results["sm"])
+            else:
+                results["sm"] = sound_roll_organizer(rows[0][1])
+
+            # organize shuttles
+            results["shuttles"] = shuttle_organizer(results["shuttles"])
+
+            email = {}
+
+            # create email distro
+            email["distro"] = distro
+
+            # create email subject
+            email["subject"] = complete_subject(results)
+
+            # create email body
+            email["body"] = complete_body(results)
+
+            return jsonify(email)

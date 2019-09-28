@@ -1,5 +1,13 @@
 
-clean(document.body);
+
+$(document).ready(function (){
+
+    clean(document.body);
+    
+    $(function () {
+        $('[data-toggle="popover"').tooltip();
+      })
+})
 
 let form = document.querySelector("form").addEventListener('submit', function(event) {
 
@@ -10,11 +18,14 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
     dict['ep'] = document.querySelector('#ep').value;
     dict['shootDay'] = document.querySelector("#shoot-day").value;
     dict['gb'] = document.querySelector("#gb").value;
+    dict['email'] = 'complete';
+    dict['shuttles'] = document.querySelector("#shuttles").value;
+    
+    // let validForm = validation(dict)
+    
     dict['cm'] = document.querySelector("#c-masters").value;
     dict['sm'] = document.querySelector("#s-masters").value;
-    dict['email'] = 'complete';
-
-    // let validForm = validation(dict)
+    dict['discrepancies'] = document.querySelector("#discrepancies").value;
 
     trt = trts();
 
@@ -31,7 +42,9 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
                 "gb": dict["gb"],
                 "c-masters": dict["cm"],
                 "s-masters": dict["sm"],
-                "email": dict["email"], 
+                "email": dict["email"],
+                "discrepancies": dict["discrepancies"],
+                "shuttles": dict["shuttles"], 
                 "test": JSON.stringify(dict["trt"])
             }, 
             function(response) {
@@ -40,7 +53,15 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
                     alert("Hey there was no response!");
                 }
                 
-                alert(response);
+                // Display email contianer
+                $('.email-container').fadeIn();
+                document.querySelector(".email-container").style.display = "grid";
+        
+                document.querySelector(".email-subject").innerHTML = response["subject"] + "<br>";
+                let body = document.querySelector(".email-body");
+                body.innerHTML = response["body"];
+        
+                document.querySelector(".email-distro").innerHTML = response["distro"];               
             }
         )}
 });
@@ -147,3 +168,15 @@ function validation(lst) {
     }
     return true;
 }
+
+function copy(element) {
+
+   if (window.getSelection) {
+        var range = document.createRange();
+         range.selectNode(document.querySelector(element));
+         window.getSelection().removeAllRanges();
+         window.getSelection().addRange(range);
+         document.execCommand("copy");
+         window.getSelection().removeAllRanges();
+    }
+};

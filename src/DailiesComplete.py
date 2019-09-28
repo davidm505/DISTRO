@@ -42,8 +42,8 @@ class Organizer:
         mag_list = []
 
         cam_reg_ex = re.compile(r'''
-        ([a-z]           # Camera Letter
-        \d{3}           # Camera Numerical Roll
+        ([a-z]              # Camera Letter
+        \d{3}               # Camera Numerical Roll
         (_\d\d\d\d\d)?)     # (optional) FrameRate
         ''', re.IGNORECASE | re.VERBOSE)
 
@@ -54,7 +54,6 @@ class Organizer:
         
         mag_list.sort()
         mtch_obj_string = '<br>'.join(mag_list)
-        print(mtch_obj_string)
         return mtch_obj_string
 
     def sound_regex(self):
@@ -73,7 +72,7 @@ class Organizer:
         mtch_obj = sound_regex.findall(self.media)
 
         for roll in mtch_obj:
-            roll_list.append(roll[0])
+            roll_list.append(roll[0].upper())
 
         roll_list.sort()
         mtch_obj_string = '<br>'.join(roll_list)
@@ -99,30 +98,25 @@ def episode_organizer(eps, day):
     return organized_ep
 
 
-def shuttle_organizer():
+def shuttle_organizer(shuttles):
     '''
         Returns:
                 Organized shuttle(s), and displays them on their
                 own line.
     '''
 
-    shuttle_drives = ''
+    s = Organizer(shuttles)
+    new_shuttles = s.shuttle_regex()
 
-    while shuttle_drives == '':
-        shuttle_drives = str(input("Please Enter Shuttle Drives: "))
+    appended_shuttle_list = ''
 
-        s = Organizer(shuttle_drives)
-        new_shuttles = s.shuttle_regex()
+    for drive in new_shuttles:
+        appended_shuttle_list += "Shuttle Drive: " + drive + '<br>'
 
-        appended_shuttle_list = ''
-
-        for drive in new_shuttles:
-            appended_shuttle_list += "Shuttle Drive: " + drive + '<br>'
-
-        return appended_shuttle_list
+    return appended_shuttle_list
 
 
-def camera_roll_organizer():
+def camera_roll_organizer(cr):
     '''
         Calls for input of camera roll(s).
 
@@ -131,35 +125,70 @@ def camera_roll_organizer():
                 own line.
         '''
 
-    camera_rolls = ''
-
-    while camera_rolls == '':
-        camera_rolls = str(input('Please Enter Camera Rolls: '))
-
-        new_camera_rolls = Organizer(camera_rolls)
-        return new_camera_rolls.cam_reg_ex().upper()
+    new_camera_rolls = Organizer(cr)
+    return new_camera_rolls.cam_reg_ex()
 
 
-def sound_roll_organizer():
+def sound_roll_organizer(sr):
     """[Prompts for sound roll input,]
 
     Returns:
         [string] -- [returns sound rolls formatted on a new line per roll]
     """
 
-    sound_rolls = ''
+    new_sound_roll = Organizer(sr)
 
-    while sound_rolls == '':
+    return new_sound_roll.sound_regex().upper()
 
-        sound_rolls = str(input("Please Enter Sound Rolls: "))
-        new_sound_roll = Organizer(sound_rolls)
 
-        return new_sound_roll.sound_regex().upper()
+def str_to_lst(str):
+    """Takes in a string of master media
+    removes commas, and converts to a list.
+    
+    Arguments:
+        str {string} -- A string of master media
+    
+    Retruns:
+        list -- master media mags as a list
+    """
+    comma_free = str.replace(',', "")
+
+    li = list(comma_free.split(" "))
+
+    return li
+
+
+def append_mags(db_mag, input_mag):
+    """Takes in master media from database and user inputted master media.
+    Converts contents to lists, compares the two and appends new media if 
+    it is not in database.
+
+    Arguments:
+        db_mag {list} -- Master media from the database
+        input_mag {list} -- User inputted master media.
+
+    Returns:
+        String -- A string containing appended user mags with html <br> seperating the individual mags.
+    """
+
+    db_mag = str_to_lst(db_mag)
+    input_mag = str_to_lst(input_mag)
+
+    for item in input_mag:
+        if item not in db_mag:
+            db_mag.append(item)
+
+    cm = ' '.join(db_mag)
+
+    appended_mags = camera_roll_organizer(cm)
+
+    return appended_mags
 
 
 def complete_subject(dict):
-    pass
-    subject = f'''
+    
+    subject = ''
+    subject += f'''
         {dict["show_code"]}_{date + dict["day"]}_{dict["ep"]}_{dict["shoot_day"]} - Dailies Complete
     '''
 
@@ -233,7 +262,7 @@ def complete_body(dict):
             <br> 
             <p>
                 {dict["trts"]}
-                Total TB: {dict["gb"]}
+                Total GB: {dict["gb"]}
             </p>
             <br><br>
     '''

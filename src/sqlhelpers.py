@@ -72,7 +72,7 @@ def get_show_code(conn, values):
     
     cur = conn.cursor()
 
-    cur.excecute(sql, values)
+    cur.execute(sql, values)
     
     rows = cur.fetchall()
 
@@ -100,10 +100,44 @@ def get_show_name(conn, values):
 
     cur = conn.cursor()
 
-    cur.excecute(sql, values)
+    cur.execute(sql, values)
 
     rows = cur.fetchall()
 
     show_name = rows[0][1]
 
     return show_name
+
+
+def get_distro(conn, distro, values):
+    """Get distro list for dailies email.
+
+    Arguments:
+        conn {string} -- Database connection
+        distro {string} -- Dailies email
+        values {string} -- Project ID
+
+    Returns:
+        string -- A list of emails for selected dailies email.
+    """
+    
+    sql =f'''SELECT
+                email
+            FROM
+                crew
+            WHERE
+                project_id = ?
+            AND
+                {distro} = 1'''
+    
+    cur = conn.cursor()
+
+    cur.execute(sql, values)
+
+    rows = cur.fetchall()
+
+    crew = ''
+    for item in rows:
+        crew += item[0] + " "
+
+    return crew
