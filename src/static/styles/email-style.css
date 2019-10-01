@@ -17,6 +17,11 @@ a:hover {
     margin-left: auto;
     margin-right: auto;
     margin-top: 5em;
+    justify-content: center;
+}
+
+.row {
+    align-content: center;
 }
 
 .card {
@@ -31,6 +36,7 @@ a:hover {
 
 #br-card {
     border-top: 0.2rem solid #522A67;
+    align-self: center;
 }
 
 #wr-card {
