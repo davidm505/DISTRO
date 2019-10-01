@@ -15,10 +15,10 @@
                 {% for item in projects %}
                     <div class=" col">
                         <div class="card" style="width: 18rem;">
-                            <img class="card-img-top" src="https://m.media-amazon.com/images/M/MV5BMzE5NTgyMDY2N15BMl5BanBnXkFtZTgwNTcyNTAwNzM@._V1_SY1000_CR0,0,667,1000_AL_.jpg" alt="{{ item[0] }} poster">
+                            <img class="card-img-top" src="{{ url_for('static', filename='images/posters/') }}{{item[1]}}.png" alt="{{ item[1] }} poster">
                             <div class="card-body">
                                 <h5 class="card-title">{{ item[1] }}</h5>
-                                <a href="/email/{{ item[0] }}" class="btn btn-primary">Create</a>
+                                <a href="/dashboard/{{ item[0] }}" class="btn btn-primary">Create</a>
                             </div>
                         </div>
                     </div>
