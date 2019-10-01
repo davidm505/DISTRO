@@ -99,9 +99,9 @@ def logout():
     return redirect("/")
 
 
-@app.route("/email/<project_id>")
+@app.route("/dashboard/<project_id>")
 @login_required
-def email(project_id):
+def dashboard(project_id):
 
     session["project_id"] = project_id
 
@@ -113,7 +113,7 @@ def email(project_id):
 
         c.fetchall()
     
-    return render_template("email.html",project_id=project_id)
+    return render_template("dashboard.html",project_id=project_id)
 
 
 @app.route("/generator/<email>/<proj_id>", methods=["GET", "POST"])
