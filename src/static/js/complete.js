@@ -101,6 +101,13 @@ function duplicate() {
         placeholder: "Total Circle Runtime"
     });
 
+    let $closeButton = $('<button/>', {
+        type: "button",
+        class: "close-button",
+        'aria-label': "Close",
+        onclick: "remove(this)"
+    })
+
     $(".trt-container").append($trtGroup);
 
     $($trtGroup).append($ep);
@@ -108,6 +115,10 @@ function duplicate() {
     $($trtGroup).append($trt);
 
     $($trtGroup).append($cTrt);
+
+    $($trtGroup).append($closeButton);
+
+    $($closeButton).append("Remove");
 
     i++;
 }
@@ -180,3 +191,12 @@ function copy(element) {
          window.getSelection().removeAllRanges();
     }
 };
+
+function remove(child) {
+
+    let element = child.parentNode;
+
+    let parent = child.parentNode.parentNode;
+
+    parent.removeChild(element);
+}
