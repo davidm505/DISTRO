@@ -295,7 +295,7 @@ def generator(email, proj_id):
             if results['cm'] != "":
                 results["cm"] = append_mags(rows[0][0], results["cm"])
             else:
-                results['cm'] = camera_roll_organizer(results[0][0])
+                results['cm'] = camera_roll_organizer(rows[0][0])
 
             if results["sm"] != "":
                 results["sm"] = append_mags(rows[0][1], results["sm"])
