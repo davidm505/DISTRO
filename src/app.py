@@ -79,7 +79,7 @@ def login():
         
         # ensure user exits and password is correct
         if len(rows) != 1:
-            return render_template("apology.html", error="Sorry, user not found.")
+            return render_template("apology.html", error="Please ensure that the username or password is correct.")
 
         # remember user
         session["user_id"] = rows[0][0]
