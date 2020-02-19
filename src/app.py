@@ -5,10 +5,10 @@ from flask_session import Session
 from tempfile import mkdtemp
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
-from helpers import login_required
+from helpers import login_required, clear_project_id
 from BreakEmail import camera_rolls, sound_rolls, day_check, body_generation, subject_generation
 from DailiesComplete import episode_organizer, complete_subject, complete_body, camera_roll_organizer, str_to_lst, append_mags, shuttle_organizer, sound_roll_organizer
-from sqlhelpers import create_connection, update_break, create_break, get_show_code, get_show_name, get_distro
+from sqlhelpers import create_connection, add_new_show, update_break, create_break, get_show_code, get_show_name, get_distro
 
 # Configure application 
 app = Flask(__name__)
@@ -35,8 +35,7 @@ db_crew = 'distro.sqlite3'
 def index():
 
     # remove project_id if it exits to remove email nav items
-    if session.get("project_id"):
-        session.pop("project_id", None)
+    clear_project_id(session)
 
     id = session.get("user_id")
 
@@ -114,6 +113,33 @@ def dashboard(project_id):
         c.fetchall()
     
     return render_template("dashboard.html",project_id=project_id)
+
+
+@app.route("/createshow", methods=["GET", "POST"])
+@login_required
+def create_show():
+
+    # remove email nav items
+    clear_project_id(session)
+
+    if request.method == "GET":
+        return render_template("createshow.html")
+    else:
+        results = {}
+
+        results["project_name"] = request.form.get("project-name")
+        results["project_code"] = request.form.get("project-code")
+
+        if not results["project_name"] or not results["project_code"]:
+            return render_template("apology.html", error="Please complete both fields!")
+        
+        conn = create_connection(db_file)
+
+        add_new_show(conn, (session.get("user_id"), results["project_name"], results["project_code"]))
+
+        return render_template("apology.html", error="Page not built!")
+
+
 
 
 @app.route("/generator/<email>/<proj_id>", methods=["GET", "POST"])

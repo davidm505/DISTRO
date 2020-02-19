@@ -1,0 +1,23 @@
+.form-container {
+    text-align: center;
+    padding-top: 4rem;
+}
+
+#name-container,
+#code-container {
+    display: inline-block;
+    text-align: left;
+    padding-bottom: 1rem;
+}
+
+#project-code {
+    margin-bottom: 1rem;
+}
+.btn-primary {
+    background-color: #86C232;
+    border: none;
+}
+
+h5 {
+    color: #6B6E70;
+}

@@ -8,3 +8,7 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return wrapper
+
+def clear_project_id(s):
+    if s.get("project_id"):
+        s.pop("project_id", None)
