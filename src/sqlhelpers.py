@@ -40,6 +40,16 @@ def update_break(conn, task):
     conn.commit()
 
 
+def create_show(conn, values):
+    sql ='''INSERT INTO
+                projects(user_id, project_name, project_code)
+            VALUES(?,?,?)'''
+    
+    cur = conn.cursor()
+    cur.execute(sql, values)
+    conn.commit()
+
+
 def create_break(conn, values):
     '''
     create row in  
@@ -52,7 +62,8 @@ def create_break(conn, values):
     cur = conn.cursor()
 
     cur.execute(sql, values)
-    cur.commit()
+    conn.commit()
+
 
 def get_show_code(conn, values):
     '''
