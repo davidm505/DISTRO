@@ -40,7 +40,7 @@ def update_break(conn, task):
     conn.commit()
 
 
-def create_show(conn, values):
+def add_new_show(conn, values):
     sql ='''INSERT INTO
                 projects(user_id, project_name, project_code)
             VALUES(?,?,?)'''

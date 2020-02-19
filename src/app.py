@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import login_required, clear_project_id
 from BreakEmail import camera_rolls, sound_rolls, day_check, body_generation, subject_generation
 from DailiesComplete import episode_organizer, complete_subject, complete_body, camera_roll_organizer, str_to_lst, append_mags, shuttle_organizer, sound_roll_organizer
-from sqlhelpers import create_connection, update_break, create_break, get_show_code, get_show_name, get_distro
+from sqlhelpers import create_connection, add_new_show, update_break, create_break, get_show_code, get_show_name, get_distro
 
 # Configure application 
 app = Flask(__name__)
@@ -135,16 +135,7 @@ def create_show():
         
         conn = create_connection(db_file)
 
-        with conn:
-            cur = conn.cursor()
-
-            sql = '''
-                    INSERT INTO 
-                        projects(user_id, project_name, project_code)
-                    VALUES(?,?,?)'''
-
-            cur.execute(sql, (session.get("user_id"), results["project_name"], results["project_code"]))
-            conn.commit()
+        add_new_show(conn, (session.get("user_id"), results["project_name"], results["project_code"]))
 
         return render_template("apology.html", error="Page not built!")
 
