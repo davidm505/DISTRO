@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Create Show
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/create-show-style.css')}}">
+{% endblock %}
+
+{% block body %}
+    <main>
+        <div class="form-container">
+            <form action="/createshow" method="POST">
+                <div id="name-container">
+                    <h5 class="label">Show Name</h5>
+                    <input type="text" name="project-name" id="project-name" placeholder="Briarpatch" autofocus>
+                </div><br>
+                <div id="code-container">
+                    <h5 class="label">Show Code</h5>
+                    <input type="text" name="project-code" id="project-code" placeholder="BP"><br>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="{{url_for('static', filename='js/createshow.js')}}"></script
+{% endblock %}
