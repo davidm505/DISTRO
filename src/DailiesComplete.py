@@ -268,26 +268,3 @@ def complete_body(dict):
     '''
 
     return body
-
-
-#     stills_email = f'''
-#     <html>
-#         <head>
-#             <title>Stills Email</title>
-#         </head>
-#         <body>
-#             <p>{stills_distro_list}</p>
-#             <p>
-#                 {show_code}_{date + day}_{episode}_{shooting_day} - Stills
-#             </p>
-#             <div>
-#                 Hello,
-#             </div>
-#             <br>
-#             <div>
-#                 Included is a link​​​​​ to the stills​ for, <strong>\"{show_name}\"</strong> ​Episode {episode}, Day {shooting_day}​.
-#             </div>
-#         </body>
-#     </html>
-#     '''
-    

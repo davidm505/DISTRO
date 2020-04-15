@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{member[0][1]}}
+{% endblock %}
+
+{% block style %}
+    
+{% endblock %}
+
+{% block body %}
+    <main>
+        <table class="table table-striped table-dark" style="width: 50%;">
+            <tbody>
+                <tr>
+                    <td class="title">Name</td>
+                    <td>{{member[0][1]}}</td>
+                    <td><a href="/crew/{{project_id}}/member/{{member_id}}/edit/name"><button>Edit</button></a></td>
+                </tr>
+                <tr>
+                    <td class="title">Department</td>
+                    <td>{{member[0][2]}}</td>
+                    <td><a href="/crew/{{project_id}}/member/{{member_id}}/edit/department"><button>Edit</button></a></td>
+                </tr>
+                <tr>
+                    <td class="title">Position</td>
+                    <td>{{member[0][3]}}</td>
+                    <td><a href="/crew/{{project_id}}/member/{{member_id}}/edit/position"><button>Edit</button></a></td>
+                </tr>
+                <tr>
+                    <td class="title">Email</td>
+                    <td>{{member[0][4]}}</td>
+                    <td><a href="/crew/{{project_id}}/member/{{member_id}}/edit/email"><button>Edit</button></a></td>
+                </tr>
+                <tr>
+                    <td class="title">Distros</td>
+                    <td>
+                        {% if member[0][5] == 1 %}
+                            Break,
+                        {% endif %}
+                        {% if member[0][6] == 1 %}
+                            Complete,
+                        {% endif %}
+                        {% if member[0][7] == 1 %}
+                            Stills
+                        {% endif %}
+                    </td>
+                    <td><a href="/crew/{{project_id}}/member/{{member_id}}/edit/distro"><button>Edit</button></a></td>
+                </tr>
+             </tbody>
+        </table>
+        <a href="/crew/{{project_id}}"><button id="redirect-button">Done</button></a> 
+    </main>
+{% endblock %}

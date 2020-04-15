@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Crew
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/crew-style.css')}}">
+{% endblock %}
+
+{% block body %}
+    <form action="/crew/{{project_id}}" method="POST">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputName">Name</label>
+                <input type="text" class="form-control" id="inputName" name="name" placeholder="Wes Studi">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail">Email</label>
+            <input type="email" class="form-control" id="inputEmail" name="email" placeholder="somebody@somemail.com">
+        </div>
+        <div class="form-group">
+            <label for="position">Position</label>
+            <input type="text" class="form-control" id="position" name="position" placeholder="1st Assistant Editor">
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputDepartment">Department</label>
+                <select id="inputDepartment" name="department" class="form-control">
+                    <option selected>Choose...</option>
+                    {% for department in departments %}
+                        <option value="{{ department }}">{{ department }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">Break</div>
+            <div class="col-sm-10">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="break-distro" id="break-distro">
+                <label class="form-check-label" for="break-distro">
+                  Receive
+                </label>
+              </div>
+            </div>
+          </div>
+        <div class="form-group row">
+            <div class="col-sm-2">Complete</div>
+            <div class="col-sm-10">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="complete-distro" id="complete-distro">
+                <label class="form-check-label" for="complete-distro">
+                  Receive
+                </label>
+              </div>
+            </div>
+          </div>
+        <div class="form-group row">
+            <div class="col-sm-2">Stills</div>
+            <div class="col-sm-10">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="stills-distro" id="stills-distro">
+                <label class="form-check-label" for="stills-distro">
+                  Receive
+                </label>
+              </div>
+            </div>
+          </div>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+    <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="heading{{i}}">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        Crew List
+                        </button>
+                    </h2>
+                </div>
+        
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <table style="width:100%">
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Email</th>
+                            </tr>
+                            {% for c in crew %}
+                                <tr>
+                                    <td><a href="/crew/{{project_id}}/member/{{c[4]}}">{{c[1]}}</a></td>
+                                    <td>{{c[2]}}</td>
+                                    <td>{{c[3]}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <script src="{{url_for('static', filename='js/crewvalidation.js')}}"></script>
+{% endblock %}

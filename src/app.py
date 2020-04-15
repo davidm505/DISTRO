@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, redirect, render_template, session, request, jsonify
+from flask import Flask, redirect, render_template, session, request, jsonify, url_for
 from flask_session import Session
 from tempfile import mkdtemp
 import sqlite3
@@ -137,7 +137,7 @@ def create_show():
 
         add_new_show(conn, (session.get("user_id"), results["project_name"], results["project_code"]))
 
-        return render_template("apology.html", error="Page not built!")
+        return redirect("/")
 
 
 
@@ -343,3 +343,260 @@ def generator(email, proj_id):
             email["body"] = complete_body(results)
 
             return jsonify(email)
+
+
+@app.route("/crew/<proj_id>", methods=["GET", "POST"])
+@login_required
+def crew(proj_id):
+
+    departments = ["Accounting", "Art Department", "Camera", "Catering", "Construction", "Continuity",
+                    "Costumes", "Dailies", "Editorial", "Greens", "Grip", "Hair", "Lighting", "Locations",
+                    "Makeup", "Paint", "Production Office", "Props", "Set Decoration", 
+                    "Set Production", "Sound", "Transportation", "VFX"]
+
+    if request.method == "GET":
+
+        crew = []
+        conn = create_connection(db_crew)
+        with conn:
+            sql ='''SELECT
+                        department, name, position, email, member_id
+                    FROM
+                        crew
+                    WHERE
+                        project_id = ?
+                    ORDER BY
+                        department,
+                        name'''
+
+            cur = conn.cursor()
+            cur.execute(sql, (proj_id))
+
+            crew = cur.fetchall()
+
+        print(crew)
+        return render_template("crew.html", project_id=proj_id, departments=departments, crew=crew, len=len(crew))
+    else:
+
+        results = {}
+
+        results['name'] = request.form.get('name')
+        results['email'] = request.form.get('email') + ";"
+        results["position"] = request.form.get("position")
+        results['department'] = request.form.get('department')
+        results['break_distro'] = request.form.get('break-distro')
+        results['complete_distro'] = request.form.get('complete-distro')
+        results['stills_distro'] = request.form.get('stills-distro')
+        results['project_id'] = proj_id
+
+        for key in results:
+            value = results[key]
+
+            if value == "" or value == "Choose...":
+                return render_template("apology.html", error="Please fill out all fields!")
+
+        if request.form.get("break-distro") == None:
+            results["break_distro"] = 0
+        else:
+            results["break_distro"] = 1
+
+        if results["complete_distro"] == None:
+            results["complete_distro"] = 0
+        else:
+            results["complete_distro"] = 1
+
+        if results["stills_distro"] == None:
+            results["stills_distro"] = 0
+        else:
+            results["stills_distro"] = 1
+
+        conn = create_connection(db_crew)
+        with conn:
+            cur = conn.cursor()
+
+            sql = '''INSERT INTO
+                            crew(project_id, department, name, position, email, 
+                            break_distro, complete_distro, stills_distro)
+                    VALUES(?,?,?,?,?,?,?,?)'''
+
+            cur.execute(sql, (results['project_id'], results['department'], results['name'], 
+                                results['position'], results['email'], results['break_distro'], 
+                                results['complete_distro'], results['stills_distro']))
+            conn.commit()
+
+        print(results)
+        return redirect(url_for('crew', proj_id=proj_id))
+    
+
+@app.route("/crew/<proj_id>/member/<member_id>", methods=["GET", "POST"])
+@login_required
+def member(proj_id, member_id):
+
+    if request.method == "GET":
+        member = []
+
+        conn = create_connection(db_crew)
+        with conn:
+            sql ='''SELECT
+                        member_id, name, department, position, email,
+                        break_distro, complete_distro, stills_distro
+                    FROM
+                        crew
+                    WHERE
+                        project_id = ?
+                    AND
+                        member_id = ?'''
+
+            cur = conn.cursor()
+            cur.execute(sql, (proj_id, member_id))
+            member = cur.fetchall()
+
+        print(member)
+    return render_template('member.html', project_id=proj_id, member_id=member_id, member=member)
+
+@app.route("/crew/<proj_id>/member/<member_id>/edit/<value>", methods=["GET", "POST"])
+@login_required
+def edit_member(proj_id, member_id, value):
+
+    possible_values = ["name", "department", "position", "email", "distro"]
+
+    if value not in possible_values:
+        return render_template("apology.html", error="Something seems to have gone wrong")
+
+    if value == "distro":
+        value = "break_distro, complete_distro, stills_distro"
+
+    if request.method == "GET":
+
+        departments = ["Accounting", "Art Department", "Camera", "Catering", "Construction", "Continuity",
+                    "Costumes", "Dailies", "Editorial", "Greens", "Grip", "Hair", "Lighting", "Locations",
+                    "Makeup", "Paint", "Production Office", "Props", "Set Decoration", 
+                    "Set Production", "Sound", "Transportation", "VFX"]
+        
+        member = []
+
+        conn = create_connection(db_crew)
+        with conn:
+            sql =f'''SELECT
+                        {value}
+                    FROM
+                        crew
+                    WHERE
+                        project_id = ?
+                    AND
+                        member_id = ?'''
+            cur = conn.cursor()
+            cur.execute(sql, (proj_id, member_id))
+            member = cur.fetchall()
+
+        return render_template("memberedit.html", project_id=proj_id, 
+                                member_id=member_id, value=value, member=member, departments=departments)
+    else:      
+        if value == "name":
+
+            data = request.form.get("inputName")
+
+            conn = create_connection(db_crew)
+            with conn:
+                sql = '''UPDATE
+                            crew
+                        SET
+                            name = ?
+                        WHERE
+                            project_id = ?
+                        AND
+                            member_id = ?
+                        '''
+                cur = conn.cursor()
+                cur.execute(sql, (data, proj_id, member_id))
+                conn.commit()
+            
+        elif value == "department":
+
+            data = request.form.get("inputDepartment")
+
+            conn = create_connection(db_crew)
+            with conn:
+                sql = '''UPDATE
+                            crew
+                        SET
+                            department = ?
+                        WHERE
+                            project_id = ?
+                        AND
+                            member_id = ?
+                        '''
+                cur = conn.cursor()
+                cur.execute(sql, (data, proj_id, member_id))
+                conn.commit()
+
+        elif value == "position":
+
+            data = request.form.get("inputPosition")
+
+            conn = create_connection(db_crew)
+            with conn:
+                sql = '''UPDATE
+                            crew
+                        SET
+                            position = ?
+                        WHERE
+                            project_id = ?
+                        AND
+                            member_id = ?
+                        '''
+                
+                cur = conn.cursor()
+                cur.execute(sql, (data, proj_id, member_id))
+                conn.commit()
+
+        elif value == "email":
+
+            data = request.form.get("inputEmail")
+
+            conn = create_connection(db_crew)
+            with conn:
+                sql = '''UPDATE
+                            crew
+                        SET
+                            email = ?
+                        WHERE
+                            project_id = ?
+                        AND
+                            member_id = ?
+                        '''
+                cur = conn.cursor()
+                cur.execute(sql, (data, proj_id, member_id))
+                conn.commit()
+
+        elif value == "break_distro, complete_distro, stills_distro":
+
+            data = {}
+            data['break'] = request.form.get("inputBreak")
+            data['complete'] = request.form.get("inputComplete")
+            data['stills'] = request.form.get("inputStills")
+
+            for key in data:
+                if data[key] == None:
+                    data[key] = 0
+                else:
+                    data[key] = 1
+            
+            conn = create_connection(db_crew)
+            with conn:
+                sql = '''UPDATE
+                            crew
+                        SET
+                            break_distro = ?,
+                            complete_distro = ?,
+                            stills_distro = ?
+                        WHERE
+                            project_id = ?
+                        AND
+                            member_id = ?
+                        '''
+                cur = conn.cursor()
+                cur.execute(sql, (data['break'], data['complete'], data['stills'], proj_id, member_id))
+                conn.commit()
+
+        return redirect(url_for('member', proj_id=proj_id, member_id=member_id))
