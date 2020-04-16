@@ -1,0 +1,17 @@
+#table-container {
+    margin-top: 3rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem;
+    width: 60%;
+    background-color: rgb(27, 27, 27);
+    border-radius: 10px;
+}
+
+.title {
+    font-weight: bold;
+}
+
+table {
+    border-radius: 10px;
+}
