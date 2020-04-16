@@ -13,6 +13,7 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
 
     event.preventDefault();
 
+    let formAction = this.action;
     let dict = {};
 
     dict['ep'] = document.querySelector('#ep').value;
@@ -35,7 +36,7 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
     
     if (true) {
 
-        $.post("/generator/complete/" + "3",
+        $.post(formAction,
             {
                 "ep": dict["ep"],
                 "shoot-day": dict["shootDay"],
@@ -45,7 +46,7 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
                 "email": dict["email"],
                 "discrepancies": dict["discrepancies"],
                 "shuttles": dict["shuttles"], 
-                "test": JSON.stringify(dict["trt"])
+                "trt": JSON.stringify(dict["trt"])
             }, 
             function(response) {
                 
