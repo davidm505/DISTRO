@@ -50,16 +50,15 @@ let form = document.querySelector("form").addEventListener('submit', function(ev
             "trt": dict["trt"],
             "c-masters": dict["cm"],
             "s-masters": dict["sm"],
-            "test": ["john", "david"],
             "email": dict["email"]
         }, 
         function(response){
                 
             if (!response) {
-                event.preventDefault();
                 alert("Hey no response");
+                event.preventDefault();
             }
-    
+
             // Display email contianer
             $('.email-container').fadeIn();
             document.querySelector(".email-container").style.display = "grid";

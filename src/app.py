@@ -171,15 +171,13 @@ def generator(email, proj_id):
             return render_template("complete.html", email=email.capitalize(), project_id=proj_id)
     else:
 
-        print("post request received!")
-
         # get all results from AJAX
         results = {}
 
         results["ep"] = request.form.get("ep")
         results["shoot_day"] = request.form.get("shoot-day")
         results["gb"] = request.form.get("gb")
-        results["trt"] = request.form["test"]
+        results["trt"] = request.form["trt"]
         results["email"] = request.form.get("email")
 
         # check if any information is missing
@@ -192,7 +190,10 @@ def generator(email, proj_id):
         # get current day
         results["day"] = day_check()
 
+
         if email == 'break' or email == 'wrap':
+
+            print("Break or wrap request received!")
 
             results["cm"] = request.form.get("c-masters")
             results["sm"] = request.form.get("s-masters")

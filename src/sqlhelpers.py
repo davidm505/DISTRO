@@ -55,7 +55,7 @@ def create_break(conn, values):
     create row in  
     ''' 
     sql ='''INSERT INTO
-                latest media
+                latest_media
             VALUES
                 (?,?,?,?,?)'''
     
