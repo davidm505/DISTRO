@@ -140,6 +140,10 @@ def create_show():
         return redirect("/")
 
 
+@app.route("/account")
+@login_required
+def account():
+    return render_template("apology.html", error="In Progress")
 
 
 @app.route("/generator/<email>/<proj_id>", methods=["GET", "POST"])
