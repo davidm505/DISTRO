@@ -9,6 +9,8 @@ pysqlite2-doc
 src/__pycache__/
 src/static/images/
 lib64/
+Scripts/
+.vscode/
 
 # Ignore Files
 .Python

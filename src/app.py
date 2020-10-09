@@ -221,9 +221,10 @@ def show_details(proj_id):
 @login_required
 def show_edit(proj_id, value):
 
-    possible_values = ["show-name", "show-code"]
+    possible_values = ["show-name", "show-code", "delete"]
 
     if value not in possible_values:
+        print(value)
         return render_template("apology.html", error="Sorry, something seems to have gone wrong!")
     
     if request.method == "GET":
@@ -247,6 +248,10 @@ def show_edit(proj_id, value):
                 result = get_show_code(conn, (proj_id, session.get("user_id")))
             
             return render_template("memberedit.html", proj_id=proj_id, value=value, data=result)
+
+        elif value == "delete":
+
+            return render_template("apology.html", error="Sorry, not ready!")
 
         else:
 
