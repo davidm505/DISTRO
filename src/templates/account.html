@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Account
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/account-style.css')}}">
+{% endblock %}
+
+{% block body %}
+    <main>
+        <div id="card-container">
+            <a href="/shows" class="whole-card-link">
+                <div class="card">
+                    <div class="inner-box">
+                        <h2>Your Shows</h2>
+                        <span>Edit, delete</span>
+                    </div>
+                </div>
+            </a>
+            <a href="/security" class="whole-card-link">
+                <div class="card">
+                    <div class="inner-box">
+                        <h2>Security</h2>
+                        <span>Edit login</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </main>
+{% endblock %}

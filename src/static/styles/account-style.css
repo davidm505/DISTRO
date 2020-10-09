@@ -1,0 +1,25 @@
+#card-container {
+    padding-top: 3rem;
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.card {
+    border: 1px solid rgb(247, 247, 247);
+    border-radius: 10px;
+    background-color: rgb(231, 231, 231);
+}
+
+.card:hover {
+    background-color: rgb(255, 255, 255);
+}
+
+a {
+    color: rgb(0, 0, 0);
+}
+
+a:hover {
+    text-decoration: none;
+    color: black;
+}

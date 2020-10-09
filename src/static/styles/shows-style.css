@@ -1,0 +1,17 @@
+#show-container {
+    margin-top: 3rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem;
+    border-radius: 10px;
+    width: 50%;
+    background-color: rgb(18, 18, 18);
+}
+
+.show-title {
+    font-weight: 800;
+}
+
+.edit-data {
+    width: 20%;
+}

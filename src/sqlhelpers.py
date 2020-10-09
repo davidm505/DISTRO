@@ -152,3 +152,23 @@ def get_distro(conn, distro, values):
         crew += item[0] + " "
 
     return crew
+
+
+def remove_show(conn, project_id, user_id):
+
+    sql = '''
+            DELETE FROM
+                projects
+            WHERE
+                project_id = ?
+            AND
+                user_id = ?'''
+    
+    cur = conn.cursor()
+
+    try:
+        cur.execute(sql, (project_id, user_id))
+        return True
+    except:
+        print("Unexpected error!")
+        return False

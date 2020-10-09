@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import login_required, clear_project_id
 from BreakEmail import camera_rolls, sound_rolls, day_check, body_generation, subject_generation
 from DailiesComplete import episode_organizer, complete_subject, complete_body, camera_roll_organizer, str_to_lst, append_mags, shuttle_organizer, sound_roll_organizer
-from sqlhelpers import create_connection, add_new_show, update_break, create_break, get_show_code, get_show_name, get_distro
+from sqlhelpers import create_connection, add_new_show, update_break, create_break, get_show_code, get_show_name, get_distro, remove_show
 
 # Configure application 
 app = Flask(__name__)
@@ -140,9 +140,170 @@ def create_show():
         return redirect("/")
 
 
-@app.route("/account")
+@app.route("/account", methods=["GET"])
 @login_required
 def account():
+    return render_template("account.html")
+
+
+@app.route("/shows", methods=["GET"])
+@login_required
+def shows():
+    
+    if request.method == "GET":
+
+        id = session.get("user_id")
+        project = []
+
+        with sqlite3.connect(db_file) as conn:
+            c = conn.cursor()
+
+            c.execute('''
+                        SELECT 
+                            project_id, project_name 
+                        FROM 
+                            projects
+                        WHERE
+                            user_id=?
+                        GROUP BY
+                            project_id''', (id,)
+                    )
+            
+            project = c.fetchall()
+
+        return render_template("shows.html", projects=project)
+
+
+@app.route("/shows/edit/<proj_id>", methods=["GET", "POST"])
+@login_required
+def show_details(proj_id):
+
+    if request.method == "GET":
+        # TODO: Make sure user has access to project
+        id = session.get("user_id")
+        project = []
+
+        conn = create_connection(db_file)
+        with conn:
+            c = conn.cursor()
+
+            c.execute('''
+                        SELECT
+                            project_name, project_code
+                        FROM
+                            projects
+                        WHERE
+                            user_id=?
+                        AND
+                            project_id=?
+                        ''', (id,proj_id,)
+            )
+
+            project = c.fetchall()
+
+        if len(project) < 1:
+            return render_template("apology.html", error="The project does not exist or you do not have access to the project.")
+        else:
+            return render_template("showedit.html", project=project, proj_id=proj_id)
+    else:
+        id = session.get("user_id")
+
+        conn = create_connection(db_file)
+
+        if not remove_show(conn, proj_id, id):
+            return render_template("apology.html", error="Unexpected error!")
+        else:
+            remove_show(conn, proj_id, id)
+
+
+
+@app.route("/shows/edit/<proj_id>/<value>", methods=["GET", "POST"])
+@login_required
+def show_edit(proj_id, value):
+
+    possible_values = ["show-name", "show-code"]
+
+    if value not in possible_values:
+        return render_template("apology.html", error="Sorry, something seems to have gone wrong!")
+    
+    if request.method == "GET":
+        
+        if value == "show-name":
+
+            result = []
+
+            conn = create_connection(db_file)
+            with conn:
+
+                result = get_show_name(conn, (proj_id, session.get("user_id")))
+
+            return render_template("memberedit.html", proj_id=proj_id, data=result, value=value)
+
+        elif value == "show-code":
+
+            result = []
+            with sqlite3.connect(db_file) as conn:
+
+                result = get_show_code(conn, (proj_id, session.get("user_id")))
+            
+            return render_template("memberedit.html", proj_id=proj_id, value=value, data=result)
+
+        else:
+
+            return render_template("apology.html", error="Sorry, something seems to have gone wrong!")
+    
+    else:
+
+        if value == "show-name":
+
+            new_show_name = request.form.get("inputShowName")
+
+            conn = create_connection(db_file)
+
+            with conn:
+                sql = '''
+                        UPDATE
+                            projects
+                        SET
+                            project_name = ?
+                        WHERE
+                            project_id = ?
+                        AND
+                            user_id = ?'''
+
+                cur = conn.cursor()
+                cur.execute(sql, (new_show_name, proj_id, session.get("user_id")))
+                conn.commit()
+
+        elif value == "show-code":
+            
+            new_show_code = request.form.get("inputShowCode")
+
+            conn = create_connection(db_file)
+            with conn:
+
+                sql = '''
+                        UPDATE
+                            projects
+                        SET
+                            project_code = ?
+                        WHERE
+                            project_id = ?
+                        AND
+                            user_id = ?'''
+                
+                cur = conn.cursor()
+                cur.execute(sql,(new_show_code, proj_id, session.get("user_id")))
+                conn.commit()
+
+        else:
+            return render_template("apology.html", error="Sorry, something seems to have gone wrong!")
+
+        return redirect(url_for("show_details", proj_id=proj_id))
+
+@app.route("/security", methods=["GET"])
+@login_required
+def security():
     return render_template("apology.html", error="In Progress")
 
 
